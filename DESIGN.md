@@ -119,7 +119,9 @@ dsh-memweave/
 ├── client/
 │   └── index.js                 # classic script：__ModuleLoader__.load(factory)
 └── test/
+    ├── helpers.mjs
     ├── host.test.mjs
+    ├── api.test.mjs
     ├── paths.test.mjs
     ├── client.test.mjs
     └── aggregate.test.mjs
