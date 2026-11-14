@@ -51,6 +51,7 @@ window.__ModuleLoader__.load({
       categoryHint: '点击分类：本页展开该分类明细，并为“技能浏览”预置筛选。',
       statusTitle: '状态分布',
       openMemories: '在技能浏览中查看',
+      filterPresetHint: '筛选已预置；切换到“技能浏览”可查看完整结果。',
       drillBack: '返回概览',
       drillEmpty: '该分类当前没有记忆。',
       drillLoading: '正在读取…',
@@ -148,6 +149,7 @@ window.__ModuleLoader__.load({
       categoryHint: 'Click a category to expand its entries here and preset the Memories filter.',
       statusTitle: 'Status distribution',
       openMemories: 'Open in Memories',
+      filterPresetHint: 'Filter preset; switch to Memories for the full result.',
       drillBack: 'Back to overview',
       drillEmpty: 'No memories in this category.',
       drillLoading: 'Reading…',
@@ -474,6 +476,7 @@ window.__ModuleLoader__.load({
 
       async function openCategory(type) {
         if (drillType === type) {
+          clientStore.consumePendingType();
           setDrillType(null);
           setDrill({ status: 'idle' });
           return;
@@ -578,11 +581,7 @@ window.__ModuleLoader__.load({
               ]),
               h('div', { key: 'content' }, truncate(memory.content, 100)),
             ]))) : null,
-            h('div', { className: 'mw-row', key: 'open', style: { marginTop: 6 } }, h('button', {
-              className: 'mw-button',
-              type: 'button',
-              onClick: () => { clientStore.setPendingType(drillType); },
-            }, t('openMemories'))),
+            h('div', { className: 'mw-muted mw-hint', key: 'preset', style: { marginTop: 6 } }, t('filterPresetHint')),
           ]),
         ]),
 
