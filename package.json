@@ -1,0 +1,62 @@
+{
+  "name": "dsh-memweave",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "织忆 — 把任务、判断、反模式与可衡量 Loop 织成组织记忆的 DSH 插件。",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "icon": "./icon.svg",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./client/index.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "lib",
+    "client",
+    "patches",
+    "scripts",
+    "aggregate",
+    "locale",
+    "icon.svg",
+    "README.md",
+    "DESIGN.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./patches/bundle.yaml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "dsh-memory-xfy": "*",
+    "dsh-task-memory": "*"
+  },
+  "peerDependenciesMeta": {
+    "dsh-memory-xfy": {
+      "optional": true
+    },
+    "dsh-task-memory": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\"",
+    "check": "node --check lib/index.js && node --check lib/api.js && node --check lib/fusion.js && node --check lib/paths.js && node --check client/index.js",
+    "prepare:aggregate": "node scripts/prepare-aggregate.mjs"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  }
+}

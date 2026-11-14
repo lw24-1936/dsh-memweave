@@ -1,0 +1,24 @@
+{
+  "name": "dsh-memweave-aggregate",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "织忆的可选聚合层：组合 Memweave 与已安装的兼容记忆插件，不修改被聚合插件的配置或运行时。",
+  "license": "MIT",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  }
+}

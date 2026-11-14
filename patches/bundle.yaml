@@ -1,0 +1,15 @@
+# Memweave 默认 bundle patch：只插入自身一行。
+#
+# 安装方式（desktop profile）：
+#   plugin_manager -> install_bundle -> target = 本目录绝对路径
+#
+# 不要在这里加入兼容插件行。DSH 0.2.x 的 Loader patch 没有 `optional: true`
+# 行语义；缺失包的行会变成一个 failed fiber，虽然不会阻断其它行，但会在
+# 插件清单里留下一条红色失败记录。可选的聚合组合见 patches/aggregate.yaml
+# 与 aggregate/ 说明。
+- insert:
+    - id: memweave
+      name: dsh-memweave
+      config:
+        storageRoot: ''
+        fusion: {}
