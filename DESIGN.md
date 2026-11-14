@@ -406,7 +406,7 @@ else                                      → stable
   - 读取清单；
   - 通过 `createRequire` 检查每个包是否安装；
   - 已安装 → 写入 `aggregate/cordis.patch.yml`；未安装 → 跳过并打印；
-  - 始终保留 memweave 与 `memweave-aggregate` 标记行。
+  - **不重复插入 `dsh-memweave` 行**（独立 bundle 已提供，重复会触发 Loader duplicate entry id），始终保留 `memweave-aggregate` 标记行。
 - `aggregate/` 是独立包 `dsh-memweave-aggregate`，默认导出 `MemweaveAggregate` 服务（`memweaveAggregate`），供 `memweave_fusion_status` 判定 `aggregateBundle=true`。
 - 安装聚合包 = 安装一个只做“组合声明 + 标记”的 bundle；被聚合插件的配置、运行时、工具都不被改写。
 - 明确限制：当前 DSH 不支持“同一 bundle 多 patch 按参数选择”，因此聚合不是 `dsh plugin add --patch aggregate`；而是安装独立的 `aggregate/` 包。这个等价方案保留了“缺失即跳过、独立安装不受影响”的验收语义。

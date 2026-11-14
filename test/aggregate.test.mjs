@@ -9,6 +9,7 @@ import {
   isInstalled,
   parseAggregateManifest,
   renderPatch,
+  selectAggregateRows,
 } from '../scripts/prepare-aggregate.mjs';
 import { cleanup, makeWorkspace } from './helpers.mjs';
 
@@ -46,11 +47,32 @@ test('isInstalled distinguishes a present package from a missing one', async () 
   }
 });
 
+test('selection keeps Memweave out of the aggregate patch to avoid duplicate ids', async () => {
+  const profile = await makeWorkspace('memweave-profile-');
+  try {
+    await fs.writeFile(path.join(profile, 'package.json'), JSON.stringify({ name: 'profile', private: true }), 'utf8');
+    const packageDir = path.join(profile, 'node_modules', 'dsh-memory-xfy');
+    await fs.mkdir(packageDir, { recursive: true });
+    await fs.writeFile(path.join(packageDir, 'package.json'), JSON.stringify({ name: 'dsh-memory-xfy', version: '1.0.0' }), 'utf8');
+    const declared = parseAggregateManifest(await fs.readFile(path.join(projectRoot, 'patches', 'aggregate.yaml'), 'utf8'));
+    const selection = selectAggregateRows(declared, profile);
+    assert.deepEqual(selection.provided.map(row => row.name), ['dsh-memweave']);
+    assert.deepEqual(selection.included.map(row => row.name), ['dsh-memory-xfy', 'dsh-memweave-aggregate']);
+    assert.deepEqual(selection.skipped.map(row => row.name), ['dsh-task-memory']);
+    const text = renderPatch(selection.included);
+    assert.match(text, /dsh-memory-xfy/);
+    assert.match(text, /dsh-memweave-aggregate/);
+    assert.doesNotMatch(text, /name: dsh-memweave\n/);
+  } finally {
+    await cleanup(profile);
+  }
+});
+
 test('generated aggregate patch lists the marker and keeps optional rows explicit', async () => {
   const text = await fs.readFile(path.join(projectRoot, 'aggregate', 'cordis.patch.yml'), 'utf8');
-  assert.match(text, /id: memweave/);
   assert.match(text, /id: memweave-aggregate/);
   assert.doesNotMatch(text, /optional:\s*true/);
+  assert.doesNotMatch(text, /name: dsh-memweave\n/);
 });
 
 test('aggregate marker exports a service class', async () => {

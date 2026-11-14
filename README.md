@@ -53,7 +53,7 @@ node scripts/prepare-aggregate.mjs --profile C:\Users\24193\.dsh\profiles\deskto
 #    plugin_manager -> install_bundle -> target = ...\dsh-memweave\aggregate
 ```
 
-`aggregate/cordis.patch.yml` 只声明组合；它不修改被聚合插件的配置、运行时或工具。`memweave_fusion_status` 会通过 `memweaveAggregate` 服务报告 `aggregateBundle: true`。
+`aggregate/cordis.patch.yml` 只声明“聚合标记 + 已安装的兼容插件”行；**不会重复插入 `dsh-memweave`**（那会造成 Loader 重复 id）。所以聚合是独立安装之上的加法层，不修改被聚合插件的配置、运行时或工具。`memweave_fusion_status` 会通过 `memweaveAggregate` 服务报告 `aggregateBundle: true`。
 
 ---
 

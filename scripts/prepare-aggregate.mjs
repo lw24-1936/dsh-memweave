@@ -91,13 +91,25 @@ export function renderPatch(rows) {
   return `${lines.join('\n')}\n`;
 }
 
-async function main() {
-  const profile = profileDir();
-  const source = await fs.readFile(sourcePath, 'utf8');
-  const declared = parseAggregateManifest(source);
+/**
+ * Select the rows an aggregate install should insert.
+ *
+ * Memweave itself is provided by the standalone bundle; re-inserting the same
+ * Loader id from the aggregate would be a duplicate entry id. The aggregate is
+ * therefore additive: installed optional plugins plus the marker row.
+ * @param {{ id: string, name: string, optional: boolean }[]} declared
+ * @param {string} profile
+ * @returns {{ included: object[], skipped: object[], provided: object[] }}
+ */
+export function selectAggregateRows(declared, profile) {
   const included = [];
   const skipped = [];
+  const provided = [];
   for (const row of declared) {
+    if (row.name === 'dsh-memweave') {
+      provided.push(row);
+      continue;
+    }
     if (!row.optional) {
       included.push(row);
       continue;
@@ -105,16 +117,22 @@ async function main() {
     if (isInstalled(profile, row.name)) included.push(row);
     else skipped.push(row);
   }
-  // The marker row is owned by this aggregate bundle itself, not by the
-  // declarative manifest; it is what lets memweave_fusion_status report
-  // aggregateBundle: true.
   if (!included.some(row => row.name === 'dsh-memweave-aggregate')) {
     included.push({ id: 'memweave-aggregate', name: 'dsh-memweave-aggregate' });
   }
+  return { included, skipped, provided };
+}
+
+async function main() {
+  const profile = profileDir();
+  const source = await fs.readFile(sourcePath, 'utf8');
+  const declared = parseAggregateManifest(source);
+  const { included, skipped, provided } = selectAggregateRows(declared, profile);
   await fs.mkdir(path.dirname(targetPath), { recursive: true });
   await fs.writeFile(targetPath, renderPatch(included), 'utf8');
   console.log(`profile: ${profile}`);
   console.log(`wrote:   ${targetPath}`);
+  console.log(`provided by standalone (${provided.length}): ${provided.map(row => row.name).join(', ') || 'none'}`);
   console.log(`included (${included.length}): ${included.map(row => row.name).join(', ') || 'none'}`);
   console.log(`skipped  (${skipped.length}): ${skipped.map(row => row.name).join(', ') || 'none'}`);
 }

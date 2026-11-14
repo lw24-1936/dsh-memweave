@@ -2,7 +2,5 @@
 # Only rows whose packages resolved in the profile at generation time are
 # present. Regenerate after installing or removing a compatible plugin.
 - insert:
-    - id: memweave
-      name: dsh-memweave
     - id: memweave-aggregate
       name: dsh-memweave-aggregate
