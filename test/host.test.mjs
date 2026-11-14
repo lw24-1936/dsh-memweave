@@ -392,6 +392,33 @@ test('fusion status detects files; import dry-run writes nothing; export stays i
   }
 });
 
+test('import downgrades an anti-pattern record that lacks its invalidation notes', async () => {
+  const workspace = await makeWorkspace();
+  try {
+    const directory = path.join(workspace, '.dsh-memory');
+    await fs.mkdir(directory, { recursive: true });
+    await fs.writeFile(path.join(directory, 'anti.json'), JSON.stringify({
+      memories: [{ type: 'anti_pattern', content: '导入的反模式没有说明什么情况下无效' }],
+    }), 'utf8');
+    const { tools } = createHost({
+      cwd: workspace,
+      config: { fusion: { 'dsh-memory-plus': { enabled: true, direction: 'read' } } },
+    });
+    const exec = makeExec(workspace);
+    const imported = await runTool(tools, 'memweave_import', { pluginKey: 'dsh-memory-plus' }, exec);
+    assert.equal(imported.value.imported, 1);
+    assert.equal(imported.value.samples[0].type, 'fact');
+
+    const files = await fs.readdir(path.join(workspace, '.memweave', 'memories'));
+    const stored = JSON.parse(await fs.readFile(path.join(workspace, '.memweave', 'memories', files[0]), 'utf8'));
+    assert.equal(stored.type, 'fact');
+    assert.equal(stored.confidence, 0.4);
+    assert.equal(stored.status, 'candidate');
+  } finally {
+    await cleanup(workspace);
+  }
+});
+
 test('import/export require the matching fusion direction', async () => {
   const workspace = await makeWorkspace();
   try {

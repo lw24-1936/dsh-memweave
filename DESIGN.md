@@ -387,7 +387,7 @@ else                                      → stable
 - 解析：
   - `.md`：去 YAML frontmatter，正文前 200 字；
   - `.json`：数组 / `memories|entries|items|records` 数组 / 单对象；字段 `content|text|memory|body|value|title`；
-  - 有效类型透传，否则 `fact`；
+  - 有效类型透传，否则 `fact`；导入的 `anti_pattern` 若没有反模式说明，降级为 `fact`，避免把违反契约的数据写进库；
   - 去重：内容规范化后与已有记忆及本次批次比较。
 - 写入 `confidence=0.4`、`status='candidate'`、`rationale='从 <key> 导入'`。
 - `dryRun` 绝不写盘。
@@ -589,6 +589,7 @@ window.__ModuleLoader__.load({
 ## 16. 已知限制与 v1.1 预留
 
 - **无更新任务网络的工具**：v1 只创建网络；v1.1 可加 `memweave_network_update`（append/rewire）。
+- **`superseded` 无自动入口**：v1 的 `precipitate` 只返回重叠提示，不自动取代旧记忆；该状态留给未来版本或手工维护，检索永远排除它。
 - **无自动同步**：导入导出只在显式调用时发生。
 - **无跨文件事务**：单文件原子，批量导入中途失败会留下已写入的部分（返回 imported/skipped 让用户知情）。
 - **无向量检索**：v1 用 TF-IDF；中文以二元组缓解分词问题。v1.1 可接 embedding，但必须保留可解释的 sort 依据。

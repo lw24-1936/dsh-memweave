@@ -409,12 +409,21 @@ window.__ModuleLoader__.load({
 
       const load = useCallback(async () => {
         setState({ status: 'loading' });
-        try {
-          const snapshot = await api.snapshot();
-          setState({ status: 'ready', snapshot });
-          setDraft(snapshot.storage.configuredRoot ?? '');
-        } catch (error) {
-          setState({ status: 'error', error: messageOf(error) });
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          try {
+            const snapshot = await api.snapshot();
+            setState({ status: 'ready', snapshot });
+            setDraft(snapshot.storage.configuredRoot ?? '');
+            return;
+          } catch (error) {
+            if (attempt === 1) {
+              setState({ status: 'error', error: messageOf(error) });
+              return;
+            }
+            // Saving a normal Config field restarts the Host half; the first
+            // snapshot after the write can race that restart.
+            await new Promise(resolve => setTimeout(resolve, 700));
+          }
         }
       }, []);
 

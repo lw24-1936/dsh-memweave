@@ -70,6 +70,7 @@ test('GET snapshot and memories return the shared core data', async () => {
 
     const detail = await call(route, makeRequest({ url: `/memweave/api/memory?id=${created.value.memoryId}` }));
     assert.equal(parsed(detail).result.memory.content, 'API 快照应返回存储根');
+    assert.equal(parsed(detail).result.memory.evidenceSummary, '暂无证据');
   } finally {
     await cleanup(workspace);
   }
