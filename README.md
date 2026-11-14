@@ -151,7 +151,7 @@ superseded：被新版本取代，不参与检索，保留归档
 
 ```powershell
 cd E:\projectWorkspace\ai-work\deepseek-harness\skill-work\dsh-memweave
-node --test test
+npm test
 node --check lib/index.js
 node --check client/index.js
 node scripts/prepare-aggregate.mjs --profile <profile-dir>
