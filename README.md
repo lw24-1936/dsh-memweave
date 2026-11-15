@@ -19,6 +19,7 @@
 
 <p align="center">
   <a href="#quick-start">快速开始</a> ·
+  <a href="./docs/USAGE.md">使用指南</a> ·
   <a href="#tools">工具</a> ·
   <a href="#settings">设置页</a> ·
   <a href="#architecture">架构</a> ·
@@ -48,6 +49,7 @@
 - [故障排查](#troubleshooting)
 - [路线图](#roadmap)
 - [设计文档](#design)
+- [使用指南](./docs/USAGE.md)
 - [贡献](#contributing)
 - [License](#license)
 
@@ -94,7 +96,7 @@
 <a id="screenshots"></a>
 ## 界面预览
 
-以下截图来自真实运行的 DSH 0.2.x Web UI；`插件列表` 是设置外壳自带的标签页，织忆贡献其余三个。示例数据仅用于演示。
+以下截图来自真实运行的 DSH 0.2.x Web UI；`插件列表` 是设置外壳自带的标签页，织忆贡献其余三个。示例数据仅用于演示。完整操作步骤与更多截图见 [使用指南](./docs/USAGE.md)。
 
 <details open>
 <summary><b>存储与分类</b>：绝对路径、五类计数与状态分布</summary>
