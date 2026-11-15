@@ -39,6 +39,7 @@
     "patches",
     "scripts",
     "aggregate",
+    "docs",
     "locale",
     "icon.svg",
     "README.md",

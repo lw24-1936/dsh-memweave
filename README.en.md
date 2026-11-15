@@ -22,6 +22,7 @@
   <a href="#tools">Tools</a> ·
   <a href="#settings">Settings</a> ·
   <a href="#architecture">Architecture</a> ·
+  <a href="#screenshots">Screenshots</a> ·
   <a href="#fusion">Fusion</a> ·
   <a href="./DESIGN.md">Design</a> ·
   <a href="./CHANGELOG.md">Changelog</a> ·
@@ -33,6 +34,7 @@
 
 - [Why Memweave](#why)
 - [Highlights](#highlights)
+- [Screenshots](#screenshots)
 - [Architecture](#architecture)
 - [Quick start](#quick-start)
 - [Tools](#tools)
@@ -86,6 +88,34 @@ Two cross-cutting rules:
 | 🔌 | **Read-only fusion** | Works with other memory plugins without modifying or hijacking them |
 | 🔒 | **Atomic local storage** | Exclusive temp file + `rename`; single-file writes are atomic |
 | 📦 | **No third-party runtime deps** | Host uses DSH SDK + Node built-ins; Client uses host React only |
+
+---
+
+<a id="screenshots"></a>
+## Screenshots
+
+Captured from the real DSH 0.2.x Web UI. The sample data is for demonstration only; the UI is localized to Chinese in these captures.
+
+<details open>
+<summary><b>Storage & categories</b>: absolute root, five category counts and status distribution</summary>
+
+![Storage & categories](docs/screenshots/storage.png)
+
+</details>
+
+<details>
+<summary><b>Memories</b>: status/type/keyword filters, list and verification entry point</summary>
+
+![Memories](docs/screenshots/memories.png)
+
+</details>
+
+<details>
+<summary><b>Fusion</b>: read-only probes for five known compatible plugins, with direction controls</summary>
+
+![Fusion](docs/screenshots/fusion.png)
+
+</details>
 
 ---
 

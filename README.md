@@ -22,6 +22,7 @@
   <a href="#tools">工具</a> ·
   <a href="#settings">设置页</a> ·
   <a href="#architecture">架构</a> ·
+  <a href="#screenshots">界面预览</a> ·
   <a href="#fusion">融合</a> ·
   <a href="./DESIGN.md">设计文档</a> ·
   <a href="./CHANGELOG.md">更新日志</a> ·
@@ -33,6 +34,7 @@
 
 - [为什么是“织忆”](#why)
 - [亮点](#highlights)
+- [界面预览](#screenshots)
 - [架构](#architecture)
 - [快速开始](#quick-start)
 - [工具](#tools)
@@ -86,6 +88,34 @@
 | 🔌 | **只读融合层** | 兼容其他记忆插件，但不修改、不劫持、不自动同步 |
 | 🔒 | **本地原子存储** | 独占临时文件 + `rename`；单文件写入原子 |
 | 📦 | **零第三方运行时依赖** | Host 只依赖 DSH SDK 与 Node 内置模块；Client 只用宿主 React |
+
+---
+
+<a id="screenshots"></a>
+## 界面预览
+
+以下截图来自真实运行的 DSH 0.2.x Web UI，示例数据仅用于演示。
+
+<details open>
+<summary><b>存储与分类</b>：绝对路径、五类计数与状态分布</summary>
+
+![存储与分类](docs/screenshots/storage.png)
+
+</details>
+
+<details>
+<summary><b>技能浏览</b>：状态/类型/关键词筛选，列表与验证入口</summary>
+
+![技能浏览](docs/screenshots/memories.png)
+
+</details>
+
+<details>
+<summary><b>融合</b>：5 个已知兼容插件的只读探测与方向开关</summary>
+
+![融合](docs/screenshots/fusion.png)
+
+</details>
 
 ---
 
