@@ -61,6 +61,7 @@ test('GET snapshot and memories return the shared core data', async () => {
     assert.equal(snapshotBody.ok, true);
     assert.equal(snapshotBody.snapshot.storage.total, 1);
     assert.equal(snapshotBody.snapshot.fusion.plugins.length, 5);
+    assert.equal(Array.isArray(snapshotBody.snapshot.fusion.installed), true);
 
     const list = await call(route, makeRequest({ url: '/memweave/api/memories?status=verified&limit=10' }));
     const listBody = parsed(list);

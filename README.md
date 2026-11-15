@@ -102,21 +102,21 @@
 <details open>
 <summary><b>存储与分类</b>：绝对路径、五类计数与状态分布</summary>
 
-![存储与分类](docs/screenshots/storage.png)
+![存储与分类](docs/screenshots/usage-storage.png)
 
 </details>
 
 <details>
 <summary><b>技能浏览</b>：状态/类型/关键词筛选，列表与验证入口</summary>
 
-![技能浏览](docs/screenshots/memories.png)
+![技能浏览](docs/screenshots/usage-memories.png)
 
 </details>
 
 <details>
-<summary><b>融合</b>：5 个已知兼容插件的只读探测与方向开关（截图为前 3 项，向下滚动可查看全部 5 项）</summary>
+<summary><b>融合</b>：5 个固定内置记忆适配器与已安装全栈插件区块（截图为前 3 项，向下滚动可查看全部 5 项和已安装区）</summary>
 
-![融合](docs/screenshots/fusion.png)
+![融合](docs/screenshots/usage-fusion.png)
 
 </details>
 
@@ -270,7 +270,7 @@ memweave_memory_verify(memoryId, "valid", "在任务 42 复现")
 |---|---|
 | **存储与分类** | 查看存储根、来源与目录状态；保存/清除绝对路径；查看五类计数与四种状态；点击分类下钻 |
 | **技能浏览** | 按状态/类型/关键词筛选；分页浏览；查看详情；执行“有效 / 无效 / 未定”验证 |
-| **融合** | 查看 5 个已知兼容插件的检测方式与可用性；开关融合；选择读/写/双向；查看聚合包状态 |
+| **融合** | 查看 5 个固定内置记忆适配器的检测方式与可用性；查看已安装的全栈插件；开关融合；选择读/写/双向 |
 
 验证按钮与 `memweave_memory_verify` 共用同一个 Host core，不存在两套写入逻辑。
 

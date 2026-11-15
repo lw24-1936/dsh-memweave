@@ -102,21 +102,21 @@ Captured from the real DSH 0.2.x Web UI. `Plugin list` is the settings shell's b
 <details open>
 <summary><b>Storage & categories</b>: absolute root, five category counts and status distribution</summary>
 
-![Storage & categories](docs/screenshots/storage.png)
+![Storage & categories](docs/screenshots/usage-storage.png)
 
 </details>
 
 <details>
 <summary><b>Memories</b>: status/type/keyword filters, list and verification entry point</summary>
 
-![Memories](docs/screenshots/memories.png)
+![Memories](docs/screenshots/usage-memories.png)
 
 </details>
 
 <details>
-<summary><b>Fusion</b>: read-only probes for five known compatible plugins, with direction controls (top three shown; scroll for all five)</summary>
+<summary><b>Fusion</b>: five fixed built-in memory adapters and an installed full-stack plugin section (top three shown; scroll for all five and the installed section)</summary>
 
-![Fusion](docs/screenshots/fusion.png)
+![Fusion](docs/screenshots/usage-fusion.png)
 
 </details>
 
@@ -260,7 +260,7 @@ Open **Settings → Plugins**:
 |---|---|
 | **Storage & categories** | Inspect the root, its source and status; save/clear an absolute path; see five category and four status counts; drill into a category |
 | **Memories** | Filter by status/type/keyword; paginate; inspect details; verify as valid/invalid/inconclusive |
-| **Fusion** | See detection method and availability for five known plugins; toggle fusion; choose read/write/both; inspect aggregate status |
+| **Fusion** | Inspect the five fixed built-in memory adapters and installed full-stack plugins; toggle fusion; choose read/write/both |
 
 The verify button and `memweave_memory_verify` share the same Host core — there is no second write path.
 

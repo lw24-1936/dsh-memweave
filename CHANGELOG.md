@@ -19,6 +19,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Fusion targets are now presented as built-in adapters. The external `dsh-memory-xfy` demo bundle was removed so its broken sidebar panel no longer loads; the built-in xfy adapter remains available.
 - Adapter cards no longer print missing `.dsh-memory/**` path diagnostics.
 
+### Changed
+- Deduplicated screenshots and aligned README, USAGE, and DESIGN with the fixed built-in memory adapters and the installed full-stack plugin section.
+
 ### Planned
 - Task-network update tool (`memweave_network_update`).
 - `superseded` workflow and merge suggestions.
