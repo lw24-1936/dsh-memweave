@@ -5,6 +5,25 @@
   "type": "module",
   "description": "织忆 — 把任务、判断、反模式与可衡量 Loop 织成组织记忆的 DSH 插件。",
   "license": "MIT",
+  "author": "lw24-1936",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lw24-1936/dsh-memweave.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lw24-1936/dsh-memweave/issues"
+  },
+  "homepage": "https://github.com/lw24-1936/dsh-memweave#readme",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "memory",
+    "organizational-memory",
+    "task-network",
+    "loop"
+  ],
   "main": "lib/index.js",
   "icon": "./icon.svg",
   "exports": {
@@ -23,7 +42,9 @@
     "locale",
     "icon.svg",
     "README.md",
+    "README.en.md",
     "DESIGN.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "dsh": {
