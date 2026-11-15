@@ -19,6 +19,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Removed automatic plugin/market detection, the daily discovery task, and the installed-plugin section. Fusion is now limited to the five fixed built-in adapters and explicit import/export.
 - Deduplicated screenshots and aligned README, USAGE, and DESIGN with the fixed built-in memory adapters.
 - Reworded the storage and fusion introductions so the fixed adapters, file bridge, and read-only boundaries are explicit.
+- Added a design-choice section with the current Fusion screenshot and removed stale marketplace references.
 
 ### Planned
 - Task-network update tool (`memweave_network_update`).

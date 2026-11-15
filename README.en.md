@@ -91,6 +91,19 @@ Two cross-cutting rules:
 | 🔒 | **Atomic local storage** | Exclusive temp file + `rename`; single-file writes are atomic |
 | 📦 | **No third-party runtime deps** | Host uses DSH SDK + Node built-ins; Client uses host React only |
 
+### Design choice: fixed adapters, no marketplace scanning
+
+Memweave owns the memory lifecycle, not plugin discovery or marketplace management.
+
+- The five adapters are fixed and built in, so their state is predictable;
+- Memweave does not scan profiles, tool names, or the plugin market, avoiding “installed but no data” false positives;
+- Only explicit `memweave_import` / `memweave_export` reads compatible workspace files;
+- Marketplace discovery and the installed-plugin section were removed; use DSH's plugin market or plugin manager to install, enable, or remove plugins.
+
+The Fusion tab now answers one question: **which of the five fixed adapters are enabled, and in which direction**.
+
+![Five fixed built-in adapters](docs/screenshots/usage-fusion.png)
+
 ---
 
 <a id="screenshots"></a>
