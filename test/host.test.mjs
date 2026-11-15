@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { HarnessError } from '@deepseek-ai/dsh-llm';
-import { detectFusion, listInstalledDiscoveryPlugins } from '../lib/fusion.js';
+import { detectFusion } from '../lib/fusion.js';
 import { cleanup, createHost, makeExec, makeWorkspace, runTool } from './helpers.mjs';
 
 const TOOL_NAMES = [
@@ -334,7 +334,7 @@ test('unknown memory and loop ids are INVALID_ARGUMENT with 未找到', async ()
   }
 });
 
-test('fusion status detects files; import dry-run writes nothing; export stays in its own area', async () => {
+test('fusion exposes five fixed adapters; import dry-run writes nothing; export stays in its own area', async () => {
   const workspace = await makeWorkspace();
   try {
     const memoryDir = path.join(workspace, '.dsh-memory');
@@ -358,11 +358,11 @@ test('fusion status detects files; import dry-run writes nothing; export stays i
     assert.equal(status.value.aggregateBundle, false);
     assert.equal(status.value.plugins.length, 5);
     const xfy = status.value.plugins.find(plugin => plugin.key === 'dsh-memory-xfy');
-    assert.equal(xfy.detectedBy, 'file');
+    assert.equal(xfy.detectedBy, 'builtin');
     assert.equal(xfy.available, true);
     assert.equal(xfy.enabled, true);
     const taskMemory = status.value.plugins.find(plugin => plugin.key === 'dsh-task-memory');
-    assert.equal(taskMemory.detectedBy, 'file');
+    assert.equal(taskMemory.detectedBy, 'builtin');
     assert.equal(taskMemory.available, true);
 
     const memoryStore = path.join(workspace, '.memweave', 'memories');
@@ -420,143 +420,16 @@ test('import downgrades an anti-pattern record that lacks its invalidation notes
   }
 });
 
-test('fusion tool probes use the actual xfy tool names', async () => {
-  const workspace = await makeWorkspace();
-  try {
-    const ctx = { tools: { schemas: () => [{ name: 'mem_search' }, { name: 'mem_pack' }] } };
-    const status = await detectFusion({ ctx, workspace, settings: {} });
-    const xfy = status.plugins.find(plugin => plugin.key === 'dsh-memory-xfy');
-    assert.equal(xfy.available, true);
-    assert.equal(xfy.detectedBy, 'tool');
-  } finally {
-    await cleanup(workspace);
+test('fusion exposes five available built-in adapters', async () => {
+  const status = await detectFusion({ settings: {} });
+  assert.equal(status.plugins.length, 5);
+  for (const plugin of status.plugins) {
+    assert.equal(plugin.available, true);
+    assert.equal(plugin.detectedBy, 'builtin');
   }
-});
-
-test('installed discovery plugins are read from the active profile', async () => {
-  const home = await makeWorkspace('memweave-home-');
-  const previousHome = process.env.DSH_HOME;
-  const previousProfile = process.env.DSH_PROFILE;
-  try {
-    const profileRoot = path.join(home, 'profiles', 'probe');
-    const pkgRoot = path.join(profileRoot, 'node_modules', 'dsh-better-sidebar');
-    await fs.mkdir(pkgRoot, { recursive: true });
-    await fs.writeFile(path.join(profileRoot, 'package.json'), JSON.stringify({ dependencies: { 'dsh-better-sidebar': '^1.0.0' } }), 'utf8');
-    await fs.writeFile(path.join(pkgRoot, 'package.json'), JSON.stringify({ name: 'dsh-better-sidebar', version: '1.0.0' }), 'utf8');
-    process.env.DSH_HOME = home;
-    process.env.DSH_PROFILE = 'probe';
-    const installed = await listInstalledDiscoveryPlugins();
-    assert.equal(installed.length, 1);
-    assert.equal(installed[0].key, 'dsh-better-sidebar');
-    assert.equal(installed[0].version, '1.0.0');
-    assert.equal(installed[0].category, '全栈开发');
-  } finally {
-    if (previousHome === undefined) delete process.env.DSH_HOME;
-    else process.env.DSH_HOME = previousHome;
-    if (previousProfile === undefined) delete process.env.DSH_PROFILE;
-    else process.env.DSH_PROFILE = previousProfile;
-    await cleanup(home);
-  }
-});
-
-test('discovery resolves the active profile without DSH_PROFILE', async () => {
-  const home = await makeWorkspace('memweave-home-');
-  const previousHome = process.env.DSH_HOME;
-  const previousProfile = process.env.DSH_PROFILE;
-  try {
-    const profileRoot = path.join(home, 'profiles', 'probe');
-    const pkgRoot = path.join(profileRoot, 'node_modules', 'dsh-better-sidebar');
-    await fs.mkdir(pkgRoot, { recursive: true });
-    await fs.writeFile(path.join(profileRoot, 'package.json'), JSON.stringify({
-      dependencies: { 'dsh-memweave': 'link:../dsh-memweave', 'dsh-better-sidebar': '^1.0.0' },
-    }), 'utf8');
-    await fs.writeFile(path.join(pkgRoot, 'package.json'), JSON.stringify({ name: 'dsh-better-sidebar', version: '1.0.0' }), 'utf8');
-    process.env.DSH_HOME = home;
-    delete process.env.DSH_PROFILE;
-    const installed = await listInstalledDiscoveryPlugins();
-    assert.equal(installed.length, 1);
-    assert.equal(installed[0].key, 'dsh-better-sidebar');
-  } finally {
-    if (previousHome === undefined) delete process.env.DSH_HOME;
-    else process.env.DSH_HOME = previousHome;
-    if (previousProfile === undefined) delete process.env.DSH_PROFILE;
-    else process.env.DSH_PROFILE = previousProfile;
-    await cleanup(home);
-  }
-});
-
-test('built-in adapters are available without an external plugin', async () => {
-  const home = await makeWorkspace('memweave-home-');
-  const workspace = await makeWorkspace();
-  const previousHome = process.env.DSH_HOME;
-  const previousProfile = process.env.DSH_PROFILE;
-  try {
-    process.env.DSH_HOME = home;
-    process.env.DSH_PROFILE = 'probe';
-    const ctx = { tools: { schemas: () => [] } };
-    const status = await detectFusion({ ctx, workspace, settings: {} });
-    assert.equal(status.plugins.length, 5);
-    for (const plugin of status.plugins) assert.equal(plugin.available, true);
-    const plus = status.plugins.find(plugin => plugin.key === 'dsh-memory-plus');
-    assert.equal(plus.detectedBy, 'builtin');
-    assert.match(plus.detail, /内置适配器/);
-    assert.equal(plus.detail.includes('未找到'), false);
-  } finally {
-    if (previousHome === undefined) delete process.env.DSH_HOME;
-    else process.env.DSH_HOME = previousHome;
-    if (previousProfile === undefined) delete process.env.DSH_PROFILE;
-    else process.env.DSH_PROFILE = previousProfile;
-    await cleanup(home);
-    await cleanup(workspace);
-  }
-});
-
-test('an installed compatible package is available without data or tools', async () => {
-  const home = await makeWorkspace('memweave-home-');
-  const workspace = await makeWorkspace();
-  const previousHome = process.env.DSH_HOME;
-  const previousProfile = process.env.DSH_PROFILE;
-  try {
-    const packageRoot = path.join(home, 'profiles', 'probe', 'node_modules', 'dsh-memory-plus');
-    await fs.mkdir(packageRoot, { recursive: true });
-    await fs.writeFile(path.join(packageRoot, 'package.json'), '{"name":"dsh-memory-plus"}', 'utf8');
-    process.env.DSH_HOME = home;
-    process.env.DSH_PROFILE = 'probe';
-    const ctx = { tools: { schemas: () => [] } };
-    const status = await detectFusion({ ctx, workspace, settings: {} });
-    const plus = status.plugins.find(plugin => plugin.key === 'dsh-memory-plus');
-    assert.equal(plus.available, true);
-    assert.equal(plus.detectedBy, 'installed');
-  } finally {
-    if (previousHome === undefined) delete process.env.DSH_HOME;
-    else process.env.DSH_HOME = previousHome;
-    if (previousProfile === undefined) delete process.env.DSH_PROFILE;
-    else process.env.DSH_PROFILE = previousProfile;
-    await cleanup(home);
-    await cleanup(workspace);
-  }
-});
-
-test('fusion file probes still use the session workspace with a custom storageRoot', async () => {
-  const workspace = await makeWorkspace();
-  const store = await makeWorkspace();
-  try {
-    await fs.mkdir(path.join(workspace, '.dsh-memory'), { recursive: true });
-    await fs.writeFile(path.join(workspace, '.dsh-memory', 'probe.md'), '---\ntype: fact\n---\n自定义存储根仍应探测 workspace。\n', 'utf8');
-    const { tools } = createHost({ cwd: workspace, config: { storageRoot: store } });
-    const exec = makeExec(workspace);
-    const status = await runTool(tools, 'memweave_fusion_status', {}, exec);
-    const xfy = status.value.plugins.find(plugin => plugin.key === 'dsh-memory-xfy');
-    assert.equal(xfy.available, true);
-    assert.equal(xfy.detectedBy, 'file');
-    const snapshot = await runTool(tools, 'memweave_memory_list', { summary: true }, exec);
-    assert.equal(snapshot.value.total, 0);
-    const list = await fs.readdir(path.join(store, 'memories'));
-    assert.deepEqual(list, []);
-  } finally {
-    await cleanup(workspace);
-    await cleanup(store);
-  }
+  const plus = status.plugins.find(plugin => plugin.key === 'dsh-memory-plus');
+  assert.match(plus.detail, /内置适配器/);
+  assert.equal(plus.detail.includes('未找到'), false);
 });
 
 test('import/export require the matching fusion direction', async () => {

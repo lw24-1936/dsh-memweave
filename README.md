@@ -13,7 +13,7 @@
   <img alt="version" src="https://img.shields.io/badge/version-1.0.0-4f46e5?style=flat-square" />
   <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a?style=flat-square" />
   <img alt="DSH" src="https://img.shields.io/badge/DSH-0.2.x-0ea5e9?style=flat-square" />
-  <img alt="tests" src="https://img.shields.io/badge/tests-42%20passing-brightgreen?style=flat-square" />
+  <img alt="tests" src="https://img.shields.io/badge/tests-37%20passing-brightgreen?style=flat-square" />
   <img alt="node" src="https://img.shields.io/badge/Node-%5E22.19%20%7C%7C%20%3E%3D24-339933?style=flat-square" />
 </p>
 
@@ -50,7 +50,6 @@
 - [路线图](#roadmap)
 - [设计文档](#design)
 - [使用指南](./docs/USAGE.md)
-- [插件市场巡检](./docs/MARKET-DISCOVERY.md)
 - [贡献](#contributing)
 - [License](#license)
 
@@ -88,7 +87,7 @@
 | 📈 | **可衡量 Loop** | 没有指标、目标、单位、节奏，就不能创建循环 |
 | 🕸️ | **任务网络** | 目标拆成带依赖的任务节点，并自动注入相关反模式警告 |
 | 🖥️ | **三个设置标签页** | 存储与分类、技能浏览、融合，全部读写同一份 Host 数据 |
-| 🔌 | **只读融合层** | 兼容其他记忆插件；五个目标都带内置适配器，不改配置、不劫持工具、不自动同步 |
+| 🔌 | **只读融合层** | 五个固定内置适配器；不改配置、不劫持工具、不自动同步、不自动探测 |
 | 🔒 | **本地原子存储** | 独占临时文件 + `rename`；单文件写入原子 |
 | 📦 | **零第三方运行时依赖** | Host 只依赖 DSH SDK 与 Node 内置模块；Client 只用宿主 React |
 
@@ -114,7 +113,7 @@
 </details>
 
 <details>
-<summary><b>融合</b>：5 个固定内置记忆适配器与已安装全栈插件区块（截图为前 3 项，向下滚动可查看全部 5 项和已安装区）</summary>
+<summary><b>融合</b>：5 个固定内置记忆适配器（截图为前 3 项，向下滚动可查看全部 5 项）</summary>
 
 ![融合](docs/screenshots/usage-fusion.png)
 
@@ -147,15 +146,15 @@ flowchart LR
   API --> CORE
   CORE --> PATHS
   PATHS --> STORE[(".memweave/<br/>memories · tasknets · loops")]
-  CORE -. 可选探测 .-> OTHER["其他记忆插件<br/>文件 / 服务 / 工具名"]
+  CORE -. 显式文件桥接 .-> OTHER["workspace 兼容文件<br/>.dsh-memory / .dsh-cue-bank / ..."]
 ```
 
 | 半边 | 职责 | 不做什么 |
 |---|---|---|
-| **Host** | 10 个工具、记忆/任务/Loop 核心、原子存储、同源设置 API、兼容探测 | 不渲染 UI、不打包、不混淆 |
+| **Host** | 10 个工具、记忆/任务/Loop 核心、原子存储、同源设置 API、5 个固定内置适配器 | 不渲染 UI、不打包、不混淆 |
 | **Client** | 三个设置标签页、筛选/详情/验证/融合开关、主题 token | 不直接读写文件、不操作宿主 DOM |
 
-Host 的必需依赖只有 `tools`；`webServer`、`configEditor` 和所有兼容插件都是**可选探测**。缺失时工具仍可用，设置页会显示明确的降级原因。
+Host 的必需依赖只有 `tools`；`webServer`、`configEditor` 是可选依赖。5 个适配器固定内置，不做自动插件探测；缺失 UI 能力时工具仍可用。
 
 ---
 
@@ -245,8 +244,8 @@ memweave_memory_verify(memoryId, "valid", "在任务 42 复现")
 | `memweave_memory_list` | 组织记忆 | 浏览、分类计数、分页 | `summaryByType` 始终五个键 |
 | `memweave_loop_start` | 可衡量 Loop | 定义可迭代的流程 | 指标名/目标/单位/节奏必填 |
 | `memweave_loop_record` | 可衡量 Loop | 每轮迭代结束 | 三轮起计算趋势；v1 约定越小越好 |
-| `memweave_fusion_status` | 融合 | 问兼容性、导入导出前 | 只读探测；缺失即降级 |
-| `memweave_import` | 融合 | 明确要求从其他记忆插件导入 | `dryRun` 不写盘；正式导入写 `candidate`、`confidence=0.4` |
+| `memweave_fusion_status` | 融合 | 问兼容性、导入导出前 | 五个固定内置适配器；不做自动探测 |
+| `memweave_import` | 融合 | 明确要求从兼容格式导入 | `dryRun` 不写盘；正式导入写 `candidate`、`confidence=0.4` |
 | `memweave_export` | 融合 | 明确要求导出为兼容格式 | 只写 `.memweave-exports/`，不写对方目录 |
 
 ### 记忆类型
@@ -270,7 +269,7 @@ memweave_memory_verify(memoryId, "valid", "在任务 42 复现")
 |---|---|
 | **存储与分类** | 查看存储根、来源与目录状态；保存/清除绝对路径；查看五类计数与四种状态；点击分类下钻 |
 | **技能浏览** | 按状态/类型/关键词筛选；分页浏览；查看详情；执行“有效 / 无效 / 未定”验证 |
-| **融合** | 查看 5 个固定内置记忆适配器的检测方式与可用性；查看已安装的全栈插件；开关融合；选择读/写/双向 |
+| **融合** | 查看 5 个固定内置记忆适配器的状态；开关融合；选择读/写/双向 |
 
 验证按钮与 `memweave_memory_verify` 共用同一个 Host core，不存在两套写入逻辑。
 
@@ -362,22 +361,17 @@ open(tmp, 'wx', 0o600) → write → close → rename(tmp, target)
 <a id="fusion"></a>
 ## 融合
 
-织忆不 import 其他插件的运行时值，不修改其他插件的配置，不劫持其他插件的工具。融合只通过以下公开机制发生：
-
-1. `ctx.get(serviceName)` 可选服务探测；
-2. 工具名探测；
-3. workspace 下公开记忆文件的只读扫描；
-4. 当前 profile 的安装态与内置适配器。
+织忆不 import 其他插件的运行时值，不修改其他插件的配置，不劫持其他插件的工具。融合固定为五个内置适配器，只在显式导入/导出时读取 workspace 下的兼容文件；不做自动插件探测。
 
 ### 兼容矩阵
 
 | 插件 | 检测方式 | 文件/格式 | 默认方向 |
 |---|---|---|---|
-| `dsh-memory-xfy` | 文件（内置） | `.dsh-memory/**/*.md` | 读 |
-| `dsh-memory-plus` | 文件（内置） | `.dsh-memory/**/*.json` | 读 |
-| `dsh-cue-bank` | 文件（内置） | `.dsh-cue-bank/**/*.json` | 读 |
-| `dsh-task-memory` | 文件（内置；外部工具可选） | `.dsh-task-memory/**/*.md` | 读 |
-| `dsh-graphmemory` | 文件（内置） | `.dsh-graphmemory/**/*.json` | 读 |
+| `dsh-memory-xfy` | 内置 | `.dsh-memory/**/*.md` | 读 |
+| `dsh-memory-plus` | 内置 | `.dsh-memory/**/*.json` | 读 |
+| `dsh-cue-bank` | 内置 | `.dsh-cue-bank/**/*.json` | 读 |
+| `dsh-task-memory` | 内置 | `.dsh-task-memory/**/*.md` | 读 |
+| `dsh-graphmemory` | 内置 | `.dsh-graphmemory/**/*.json` | 读 |
 
 ### 显式导入 / 导出
 
@@ -444,7 +438,7 @@ dsh-memweave/
 ├── aggregate/           # 可选聚合包（marker + 生成的 patch）
 ├── scripts/             # prepare-aggregate.mjs
 ├── locale/              # zh/en 显示元数据
-├── test/                # 42 个测试：Host、API、paths、client、aggregate
+├── test/                # 37 个测试：Host、API、paths、client、aggregate
 ├── DESIGN.md            # 完整设计文档与 ADR
 └── README.md
 ```
@@ -478,7 +472,6 @@ node scripts/prepare-aggregate.mjs --profile <profile-dir>
 | 模型看不到 `memweave_*` 工具 | 插件 fiber 未激活 | 查看插件清单状态；禁用再启用一次 |
 | 保存存储路径后报读取失败 | Config 变更触发重启的竞态 | 等 1 秒点“重试”；UI 已自动重试一次 |
 | 提示 `storageRoot 必须是绝对路径` | 填了相对路径 | 改为绝对路径，或清空使用 `.memweave/` |
-| 融合标签页显示“不可用” | 目标不是内置适配器，且没有对应文件/工具/安装态 | 确认目录与格式；文件探测只读公开区域 |
 | 聚合安装后没有 marker | 先装了聚合、未装独立版 | 先安装 `dsh-memweave`，再安装 `aggregate/` |
 | 导入 0 条、跳过 N 条 | 内容重复或文件不可读 | 先 `dryRun` 看示例；检查文件编码与格式 |
 
@@ -489,7 +482,7 @@ node scripts/prepare-aggregate.mjs --profile <profile-dir>
 
 | 版本 | 状态 | 内容 |
 |---|---|---|
-| **v1.0** | ✅ 已发布 | 10 个工具、三个设置页、融合层、聚合层、42 个测试 |
+| **v1.0** | ✅ 已发布 | 10 个工具、三个设置页、融合层、聚合层、37 个测试 |
 | v1.1 | 计划 | 任务网络更新工具；`superseded` 工作流；向量检索（保留可解释排序） |
 | v1.2 | 计划 | 更多融合适配器；导出格式扩展；截图与演示素材 |
 | 未来 | 探索 | 团队级共享存储、记忆合并建议、Loop 与任务完成自动关联 |

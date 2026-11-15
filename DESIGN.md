@@ -13,7 +13,7 @@
 1. **组织记忆**：`candidate → verified / disputed / superseded` 生命周期，默认检索池只含 `verified`，反模式强制召回。
 2. **任务网络**：把模糊目标拆成带 `dependsOn` 与 `executor` 的任务节点，作为“以任务为中心”的基本单元。
 3. **可衡量 Loop**：`metricName / metricTarget / metricUnit / cadence` 四要素强制，三轮以上给趋势。
-4. **融合层**：只读/显式调用地探测并适配兼容记忆插件；导入导出都落在织忆自己的区域。
+4. **融合层**：固定五个内置记忆适配器；只在显式导入/导出时读取兼容文件，数据仍落在织忆自己的区域。
 
 共 **10 个 Host 工具**：7 个原工具 + `memweave_fusion_status` / `memweave_import` / `memweave_export`。  
 共 **3 个设置标签页**：`存储与分类` / `技能浏览` / `融合`。
@@ -68,7 +68,7 @@
 │ settings.plugins.tab  ×3                                                     │
 │  ├─ memweave-storage  存储与分类（概览、路径、分类下钻）                    │
 │  ├─ memweave-memories 技能浏览（筛选、列表、详情、验证）                    │
-│  └─ memweave-fusion   融合（探测、开关、方向、聚合状态）                    │
+│  └─ memweave-fusion   融合（固定适配器、开关、方向、聚合状态）                    │
 │            │ fetch /memweave/api/*（同源、loopback 信任围栏）                │
 └────────────┼─────────────────────────────────────────────────────────────────┘
              │
@@ -82,7 +82,7 @@
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-Host 必需依赖只有 `tools`。`webServer`、`configEditor`、兼容插件全部是**可选依赖**：缺失时静默降级，Host 工具仍可用，UI 显示“Host 未提供读取接口/无法保存设置”。
+Host 必需依赖只有 `tools`；`webServer`、`configEditor` 是可选依赖。五个适配器固定内置，不依赖外部兼容插件；缺失 UI 能力时仍可使用工具。
 
 ---
 
@@ -114,7 +114,7 @@ dsh-memweave/
 │   ├── memory.js                # precipitate/verify/find/list core
 │   ├── network.js               # decompose core
 │   ├── loop.js                  # start/record core
-│   ├── fusion.js                # 兼容注册表、探测、导入、导出
+│   ├── fusion.js                # 固定适配器、文件桥接、导入、导出
 │   └── api.js                   # /memweave/api 路由 + 信任围栏
 ├── client/
 │   └── index.js                 # classic script：__ModuleLoader__.load(factory)
@@ -365,32 +365,23 @@ else                                      → stable
 1. 不 import 其他插件运行时值；
 2. 不修改其他插件配置；
 3. 不劫持其他插件工具；
-4. 只读文件 / `ctx.get(serviceName)` 探测 / 工具名探测；
-5. 缺失即静默降级，`dispose` 只影响自己；
-6. 五个记忆适配器固定内置，不随市场巡检增删；每日巡检只探测全栈插件候选。
+4. 不自动探测服务、工具、安装态或市场；只在显式导入/导出时读取 workspace 文件；
+5. 缺失文件即返回空结果，`dispose` 只影响自己；
+6. 五个记忆适配器固定内置，不随任何巡检或市场任务增删。
 
-### 9.2 兼容注册表（fusion.js 硬编码）
+### 9.2 固定适配器注册表（fusion.js 硬编码）
 
-| key | label | type | 探测 marker | 扩展名 | 工具名 | 默认方向 | 导出格式 |
-|---|---|---|---|---|---|---|---|
-| dsh-memory-xfy | 内置适配器 · xfy | memory | `.dsh-memory` | `.md` | mem_search, mem_pack | read | markdown |
-| dsh-memory-plus | 内置适配器 · memory-plus | memory | `.dsh-memory` | `.json` | — | read | json |
-| dsh-cue-bank | 内置适配器 · cue-bank | memory | `.dsh-cue-bank` | `.json` | — | read | json |
-| dsh-task-memory | 内置适配器 · task-memory | memory | `.dsh-task-memory` | `.md` | memory_bind_task, memory_current_task, memory_remember, memory_recall, memory_list_tasks | read | markdown |
-| dsh-graphmemory | 内置适配器 · graphmemory | memory | `.dsh-graphmemory` | `.json` | — | read | json |
+| key | label | type | marker | 扩展名 | 默认方向 | 导出格式 |
+|---|---|---|---|---|---|---|
+| dsh-memory-xfy | 内置适配器 · xfy | memory | `.dsh-memory` | `.md` | read | markdown |
+| dsh-memory-plus | 内置适配器 · memory-plus | memory | `.dsh-memory` | `.json` | read | json |
+| dsh-cue-bank | 内置适配器 · cue-bank | memory | `.dsh-cue-bank` | `.json` | read | json |
+| dsh-task-memory | 内置适配器 · task-memory | memory | `.dsh-task-memory` | `.md` | read | markdown |
+| dsh-graphmemory | 内置适配器 · graphmemory | memory | `.dsh-graphmemory` | `.json` | read | json |
 
-- `detectedBy` 优先级：`service` > `tool` > `file` > `installed` > `builtin`。
-- `available = service || tool || file || installed || builtin`；`detail` 给出可用来源，不输出缺失路径。
-- `serviceName` 现在全为 `null`；未来插件暴露服务时填入即可。
-- 五个目标都声明 `builtin: true`；`builtin` 是格式桥接就绪，不代表外部插件已安装，也不代表存在可导入数据。
-
-### 9.2.1 已安装全栈插件展示
-
-- `DISCOVERY_CATALOG` 是展示目录，不是融合适配器，不参与导入/导出。
-- 当前包含 `dsh-better-sidebar`、`dsh-data-agent`，分类为“全栈开发”。
-- `listInstalledDiscoveryPlugins()` 读取 active profile 的 `package.json` 与 `node_modules/<key>/package.json`，返回 `{ key, label, version, category, description }`。
-- 该列表通过 `/snapshot` 的 `fusion.installed` 下发给 Client，在融合页独立区块展示；只读，不提供自动安装或删除。
-- 删除仍由 `plugin_manager remove_bundle` 完成；巡检和融合层不会自动删除插件。
+- `detectFusion()` 只读取配置开关，返回 `detectedBy='builtin'`、`available=true`；不做任何外部探测。
+- 详情固定为 `内置适配器就绪；启用后可导入或导出`，不输出缺失路径。
+- 可用不代表存在可导入数据；导入仍需要匹配文件。
 
 ### 9.3 导入
 
@@ -542,8 +533,7 @@ window.__ModuleLoader__.load({
 
 **融合**
 
-- `GET /snapshot` 的 `fusion` 段；每项一行：label、检测方式、方向、状态、开关、方向选择器。
-- 已安装全栈插件独立区块：名称、版本、分类、已安装状态、删除命令提示。
+- `GET /snapshot` 的 `fusion` 段；每项一行：label、方向、状态、开关、方向选择器。
 - 聚合包状态：`聚合包已启用` / `独立安装`。
 - 兼容性声明固定一行；开关/方向变更调用 `/fusion`，成功后刷新。
 
@@ -589,7 +579,7 @@ window.__ModuleLoader__.load({
 | 2 绝对路径生效、清除回退 | Config `storageRoot` + resolve 优先级；工具与 API 共用 |
 | 3 分类概览五类、点击跳转预置筛选 | 存储页五卡 + 本页下钻 + 共享筛选 |
 | 4 列表+详情+验证按钮 | 技能浏览页 + `/api/verify` → `verifyMemory` |
-| 5 融合页覆盖 xfy/task-memory 文件探测、开关写 settings | fusion registry + `/api/fusion` → configEditor |
+| 5 融合页覆盖五个内置适配器、开关写 settings | fusion registry + `/api/fusion` → configEditor |
 | 6 fusion_status 返回 plugins/aggregateBundle | `detectFusion` + `ctx.get('memweaveAggregate')` |
 | 7 import dryRun 不写、正式写 candidate/0.4 | `importFromPlugin` |
 | 8 export 只写 `.memweave-exports/` | `exportToPlugin` |

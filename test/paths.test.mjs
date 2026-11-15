@@ -50,7 +50,7 @@ test('empty storageRoot falls back to the session workspace', async () => {
   }
 });
 
-test('configured storageRoot keeps the session workspace for fusion probes', async () => {
+test('configured storageRoot keeps the session workspace for the file bridge', async () => {
   const workspace = await makeWorkspace();
   const store = await makeWorkspace();
   try {

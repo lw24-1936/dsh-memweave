@@ -8,26 +8,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 - A complete Chinese usage guide with real UI screenshots: `docs/USAGE.md`.
-- Daily plugin marketplace discovery with optional categories; the default category is full-stack development. Memory fusion adapters remain fixed and are not market-probed.
-- The Fusion tab shows installed full-stack plugins from the active profile in a separate read-only section.
+- Five fixed built-in memory adapters with explicit import/export directions.
 
 ### Fixed
-- Fusion file probes keep the session workspace when `storageRoot` points at a custom directory. Add regression coverage for storage resolution and Fusion detection.
-- Fusion tool probes now recognize the real `mem_search` / `mem_pack` tools of `dsh-memory-xfy`, and the unique `memory_*` tools of `dsh-task-memory`.
-- Fusion reports a compatible package installed in the active profile as available even before data/tools are found; the summary shows available and enabled counts, and uninstalled targets cannot be newly enabled.
 - File-bridge compatibility targets ship built-in adapters, so all five targets remain usable without an external package; data is still only imported when matching files exist.
 - Fusion targets are now presented as built-in adapters. The external `dsh-memory-xfy` demo bundle was removed so its broken sidebar panel no longer loads; the built-in xfy adapter remains available.
 - Adapter cards no longer print missing `.dsh-memory/**` path diagnostics.
 
 ### Changed
-- Deduplicated screenshots and aligned README, USAGE, and DESIGN with the fixed built-in memory adapters and the installed full-stack plugin section.
-- Reworded the storage and fusion introductions so the five fixed memory adapters, installed full-stack plugins, and read-only/display boundaries are explicit.
+- Removed automatic plugin/market detection, the daily discovery task, and the installed-plugin section. Fusion is now limited to the five fixed built-in adapters and explicit import/export.
+- Deduplicated screenshots and aligned README, USAGE, and DESIGN with the fixed built-in memory adapters.
+- Reworded the storage and fusion introductions so the fixed adapters, file bridge, and read-only boundaries are explicit.
 
 ### Planned
 - Task-network update tool (`memweave_network_update`).
 - `superseded` workflow and merge suggestions.
 - Vector retrieval with explainable ordering.
-- More discovery categories and marketplace reports.
 
 ## [1.0.0] - 2026-11-15
 

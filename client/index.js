@@ -95,18 +95,9 @@ window.__ModuleLoader__.load({
       statusDisputed: '有争议',
       statusSuperseded: '已取代',
       fusionTitle: '融合',
-      fusionIntro: '融合页分为两部分：上方是 5 个固定内置记忆适配器，不随市场巡检变化；下方是已安装的全栈开发插件（只读展示）。启用与方向只作用于记忆适配器，不会自动同步或修改其他插件。',
+      fusionIntro: '5 个固定内置记忆适配器；启用与方向只控制显式导入/导出，不自动检测插件，也不同步或修改其他插件。',
       fusionSummary: '检测到 {count} 个记忆适配器，{available} 个可用，{enabled} 个已启用',
-      discoveryTitle: '已安装的全栈插件',
-      discoveryIntro: '来自每日巡检分类与当前 profile 安装态；只读展示，不是记忆适配器。删除请使用插件管理器。',
-      discoveryEmpty: '暂无已安装的全栈插件。',
-      discoveryInstalled: '已安装',
-      discoveryDeleteHint: '删除：plugin_manager remove_bundle target=',
       detectedBy: '检测方式',
-      byFile: '文件',
-      byService: '服务',
-      byTool: '工具',
-      byInstalled: '安装',
       byBuiltin: '内置',
       saved: '已保存',
       available: '可用',
@@ -118,9 +109,8 @@ window.__ModuleLoader__.load({
       directionBoth: '双向',
       aggregateOn: '聚合包已启用',
       aggregateOff: '独立安装',
-      compatibilityNote: '兼容性声明：Memweave 不修改其他插件的配置和运行时；融合只在显式调用时读写；已安装插件区块仅展示，不会自动操作。',
+      compatibilityNote: '兼容性声明：Memweave 不修改其他插件的配置和运行时；融合只在显式调用时读写。',
       fusionError: '融合操作失败',
-      noPlugins: '未检测到兼容插件。',
       apply: '应用',
       loading: '加载中…',
       error: '出错了',
@@ -201,18 +191,9 @@ window.__ModuleLoader__.load({
       statusDisputed: 'Disputed',
       statusSuperseded: 'Superseded',
       fusionTitle: 'Fusion',
-      fusionIntro: 'Fusion has two parts: five fixed built-in memory adapters above (not changed by marketplace discovery), and installed full-stack plugins below (read-only). Enable/direction apply only to memory adapters; nothing syncs automatically or edits another plugin.',
+      fusionIntro: 'Five fixed built-in memory adapters. Enable/direction only control explicit import/export; Memweave does not auto-detect plugins, sync automatically, or edit another plugin.',
       fusionSummary: '{count} memory adapters, {available} available, {enabled} enabled',
-      discoveryTitle: 'Installed full-stack plugins',
-      discoveryIntro: 'From the daily discovery category and active-profile install state; read-only, not memory adapters. Remove with the plugin manager.',
-      discoveryEmpty: 'No full-stack plugins installed.',
-      discoveryInstalled: 'Installed',
-      discoveryDeleteHint: 'Remove: plugin_manager remove_bundle target=',
       detectedBy: 'Detected by',
-      byFile: 'File',
-      byService: 'Service',
-      byTool: 'Tool',
-      byInstalled: 'Installed',
       byBuiltin: 'Built-in',
       saved: 'Saved',
       available: 'Available',
@@ -224,9 +205,8 @@ window.__ModuleLoader__.load({
       directionBoth: 'Both',
       aggregateOn: 'Aggregate bundle enabled',
       aggregateOff: 'Standalone install',
-      compatibilityNote: 'Compatibility: Memweave does not modify another plugin’s configuration or runtime. Fusion reads/writes only on explicit calls; the installed-plugin section is display-only.',
+      compatibilityNote: 'Compatibility: Memweave does not modify another plugin’s configuration or runtime. Fusion reads/writes only on explicit calls.',
       fusionError: 'Fusion operation failed',
-      noPlugins: 'No compatible plugins detected.',
       apply: 'Apply',
       loading: 'Loading…',
       error: 'Something went wrong',
@@ -397,8 +377,6 @@ window.__ModuleLoader__.load({
       .mw-verify-bar { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--dsw-alias-border-l1); }
       .mw-fusion-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; }
       .mw-fusion-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 3px; }
-      .mw-installed-row { padding: 10px 0; border-top: 1px solid var(--dsw-alias-border-l1); }
-      .mw-installed-row:first-of-type { border-top: 0; padding-top: 0; }
       .mw-select { padding: 5px 7px; border-radius: 7px; border: 1px solid var(--dsw-alias-border-l2); background: var(--dsw-alias-bg-layer-2, transparent); color: inherit; font: inherit; }
       .mw-switch { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
       .mw-check { width: 15px; height: 15px; accent-color: var(--dsw-alias-state-warn-primary); }
@@ -877,7 +855,7 @@ window.__ModuleLoader__.load({
         ['write', t('directionWrite')],
         ['both', t('directionBoth')],
       ];
-      const detectionLabels = { file: t('byFile'), service: t('byService'), tool: t('byTool'), installed: t('byInstalled'), builtin: t('byBuiltin') };
+      const detectionLabels = { builtin: t('byBuiltin') };
 
       return h('div', { className: 'mw-root mw-stack' }, [
         h(Styles, { key: 'styles' }),
@@ -936,31 +914,6 @@ window.__ModuleLoader__.load({
             ]),
           ]),
         ]))),
-
-        fusion === null ? null : h('div', { className: 'mw-card', key: 'installed' }, [
-          h('div', { className: 'mw-between', key: 'head' }, [
-            h('strong', { key: 'title' }, t('discoveryTitle')),
-            h('span', { className: 'mw-badge', key: 'count' }, String((fusion.installed ?? []).length)),
-          ]),
-          h('p', { className: 'mw-muted', key: 'intro' }, t('discoveryIntro')),
-          (fusion.installed ?? []).length === 0
-            ? h('p', { className: 'mw-empty', key: 'empty' }, t('discoveryEmpty'))
-            : h('div', { key: 'list' }, (fusion.installed ?? []).map(item => h('div', {
-              className: 'mw-installed-row',
-              key: item.key,
-            }, [
-              h('div', { className: 'mw-between', key: 'head' }, [
-                h('strong', { key: 'label' }, item.label),
-                h('span', { className: 'mw-badge mw-badge-ok', key: 'version' }, item.version === null ? t('discoveryInstalled') : `v${item.version}`),
-              ]),
-              h('div', { className: 'mw-fusion-meta', key: 'meta' }, [
-                h('span', { className: 'mw-badge', key: 'category' }, item.category),
-                h('span', { className: 'mw-badge mw-badge-ok', key: 'installed' }, t('discoveryInstalled')),
-              ]),
-              h('div', { className: 'mw-muted mw-hint', key: 'description' }, item.description),
-              h('div', { className: 'mw-muted mw-hint', key: 'remove' }, `${t('discoveryDeleteHint')}${item.key}`),
-            ]))),
-        ]),
 
         fusion === null ? null : h('p', { className: 'mw-muted mw-hint', key: 'statement' }, t('compatibilityNote')),
       ]);

@@ -13,7 +13,7 @@
   <img alt="version" src="https://img.shields.io/badge/version-1.0.0-4f46e5?style=flat-square" />
   <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a?style=flat-square" />
   <img alt="DSH" src="https://img.shields.io/badge/DSH-0.2.x-0ea5e9?style=flat-square" />
-  <img alt="tests" src="https://img.shields.io/badge/tests-42%20passing-brightgreen?style=flat-square" />
+  <img alt="tests" src="https://img.shields.io/badge/tests-37%20passing-brightgreen?style=flat-square" />
   <img alt="node" src="https://img.shields.io/badge/Node-%5E22.19%20%7C%7C%20%3E%3D24-339933?style=flat-square" />
 </p>
 
@@ -50,7 +50,6 @@
 - [Roadmap](#roadmap)
 - [Design](#design)
 - [User guide (中文)](./docs/USAGE.md)
-- [Marketplace discovery](./docs/MARKET-DISCOVERY.md)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -88,7 +87,7 @@ Two cross-cutting rules:
 | 📈 | **Measurable Loops** | No metric, target, unit and cadence means no Loop |
 | 🕸️ | **Task networks** | Goals become dependency-aware task nodes with anti-pattern warnings |
 | 🖥️ | **Three settings tabs** | Storage & categories, memories, fusion — one Host data source |
-| 🔌 | **Read-only fusion** | Works with other memory plugins; all five targets ship built-in adapters, without editing config, hijacking tools, or auto-syncing |
+| 🔌 | **Read-only fusion** | Five fixed built-in adapters; no config edits, tool hijacking, auto-sync, or auto-detection |
 | 🔒 | **Atomic local storage** | Exclusive temp file + `rename`; single-file writes are atomic |
 | 📦 | **No third-party runtime deps** | Host uses DSH SDK + Node built-ins; Client uses host React only |
 
@@ -114,7 +113,7 @@ Captured from the real DSH 0.2.x Web UI. `Plugin list` is the settings shell's b
 </details>
 
 <details>
-<summary><b>Fusion</b>: five fixed built-in memory adapters and an installed full-stack plugin section (top three shown; scroll for all five and the installed section)</summary>
+<summary><b>Fusion</b>: five fixed built-in memory adapters (top three shown; scroll for all five)</summary>
 
 ![Fusion](docs/screenshots/usage-fusion.png)
 
@@ -147,15 +146,15 @@ flowchart LR
   API --> CORE
   CORE --> PATHS
   PATHS --> STORE[(".memweave/<br/>memories · tasknets · loops")]
-  CORE -. optional probe .-> OTHER["other memory plugins<br/>files / service / tool names"]
+  CORE -. explicit file bridge .-> OTHER["workspace-compatible files<br/>.dsh-memory / .dsh-cue-bank / ..."]
 ```
 
 | Half | Owns | Never does |
 |---|---|---|
-| **Host** | 10 tools, memory/task/Loop core, atomic storage, same-origin API, compatibility probes | render UI, bundle, obfuscate |
+| **Host** | 10 tools, memory/task/Loop core, atomic storage, same-origin API, five fixed built-in adapters | render UI, bundle, obfuscate |
 | **Client** | Three settings tabs, filters/details/verify/fusion controls, theme tokens | touch the filesystem directly, operate host DOM |
 
-The only required Host dependency is `tools`. `webServer`, `configEditor` and every compatible plugin are optional probes: tools keep working when they are absent, and the settings UI states the degradation explicitly.
+The only required Host dependency is `tools`; `webServer` and `configEditor` are optional. The five adapters are fixed and built in — there is no automatic plugin detection. Tools keep working without the optional UI services.
 
 ---
 
@@ -245,8 +244,8 @@ All ten tools return canonical JSON only, and `output.render` emits exactly one 
 | `memweave_memory_list` | Memory | Browsing / category counts / pagination | `summaryByType` always carries five keys |
 | `memweave_loop_start` | Loop | Defining a measurable iterative process | Metric, target, unit and cadence are mandatory |
 | `memweave_loop_record` | Loop | Each iteration completes | Trends start at three rounds; smaller is better in v1 |
-| `memweave_fusion_status` | Fusion | Asking about compatibility / before import-export | Read-only probe; missing pieces degrade silently |
-| `memweave_import` | Fusion | Explicitly importing from another memory plugin | `dryRun` writes nothing; real imports are `candidate`, confidence 0.4 |
+| `memweave_fusion_status` | Fusion | Asking about compatibility / before import-export | Five fixed built-in adapters; no automatic detection |
+| `memweave_import` | Fusion | Explicitly importing from a compatible format | `dryRun` writes nothing; real imports are `candidate`, confidence 0.4 |
 | `memweave_export` | Fusion | Explicitly exporting a compatible format | Writes only `.memweave-exports/`, never another plugin's directory |
 
 ---
@@ -260,7 +259,7 @@ Open **Settings → Plugins**:
 |---|---|
 | **Storage & categories** | Inspect the root, its source and status; save/clear an absolute path; see five category and four status counts; drill into a category |
 | **Memories** | Filter by status/type/keyword; paginate; inspect details; verify as valid/invalid/inconclusive |
-| **Fusion** | Inspect the five fixed built-in memory adapters and installed full-stack plugins; toggle fusion; choose read/write/both |
+| **Fusion** | Inspect the five fixed built-in memory adapters; toggle fusion; choose read/write/both |
 
 The verify button and `memweave_memory_verify` share the same Host core — there is no second write path.
 
@@ -350,22 +349,17 @@ failure: best-effort unlink(tmp)
 <a id="fusion"></a>
 ## Fusion
 
-Memweave never imports another plugin's runtime values, edits another plugin's configuration, or hijacks another plugin's tools. Fusion uses only public surfaces:
-
-1. optional `ctx.get(serviceName)` probes;
-2. tool-name probes;
-3. read-only scans of public memory files under the workspace;
-4. active-profile install state and built-in adapters.
+Memweave never imports another plugin's runtime values, edits another plugin's configuration, or hijacks another plugin's tools. Fusion is fixed to five built-in adapters and reads workspace-compatible files only on explicit import/export; there is no automatic plugin detection.
 
 ### Compatibility matrix
 
 | Plugin | Detection | File / format | Default direction |
 |---|---|---|---|
-| `dsh-memory-xfy` | file (built-in) | `.dsh-memory/**/*.md` | read |
-| `dsh-memory-plus` | file (built-in) | `.dsh-memory/**/*.json` | read |
-| `dsh-cue-bank` | file (built-in) | `.dsh-cue-bank/**/*.json` | read |
-| `dsh-task-memory` | file (built-in; external tool optional) | `.dsh-task-memory/**/*.md` | read |
-| `dsh-graphmemory` | file (built-in) | `.dsh-graphmemory/**/*.json` | read |
+| `dsh-memory-xfy` | built-in | `.dsh-memory/**/*.md` | read |
+| `dsh-memory-plus` | built-in | `.dsh-memory/**/*.json` | read |
+| `dsh-cue-bank` | built-in | `.dsh-cue-bank/**/*.json` | read |
+| `dsh-task-memory` | built-in | `.dsh-task-memory/**/*.md` | read |
+| `dsh-graphmemory` | built-in | `.dsh-graphmemory/**/*.json` | read |
 
 ### Explicit import / export
 
@@ -432,7 +426,7 @@ dsh-memweave/
 ├── aggregate/           # Optional aggregate package (marker + generated patch)
 ├── scripts/             # prepare-aggregate.mjs
 ├── locale/              # zh/en display metadata
-├── test/                # 42 tests: Host, API, paths, client, aggregate
+├── test/                # 37 tests: Host, API, paths, client, aggregate
 ├── DESIGN.md            # Full design and ADR record
 └── README.md
 ```
@@ -466,7 +460,7 @@ Tests need resolvable `@deepseek-ai/dsh-tools`, `@deepseek-ai/dsh-llm` and `@dee
 | `memweave_*` tools missing | Fiber not active | Check plugin status; disable and enable again |
 | Read failure right after saving a path | Config restart race | Wait a second and retry; the UI already retries once |
 | `storageRoot must be absolute` | Relative path submitted | Use an absolute path or clear the field |
-| Fusion row says unavailable | No matching files/tools in the workspace | Check the directory and format; only public files are read |
+| No new plugin appears in Fusion | Fixed built-in adapters; no auto-detection | Enable one of the five adapters and choose a direction |
 | Aggregate installed but no marker | Aggregate installed without standalone Memweave | Install `dsh-memweave` first, then `aggregate/` |
 | Import reports 0 imported, N skipped | Duplicate or unreadable content | Run `dryRun` first; check encoding and format |
 
@@ -477,7 +471,7 @@ Tests need resolvable `@deepseek-ai/dsh-tools`, `@deepseek-ai/dsh-llm` and `@dee
 
 | Version | Status | Content |
 |---|---|---|
-| **v1.0** | ✅ released | 10 tools, three settings tabs, fusion, aggregate, 42 tests |
+| **v1.0** | ✅ released | 10 tools, three settings tabs, fusion, aggregate, 37 tests |
 | v1.1 | planned | Task-network update tool; `superseded` workflow; vector retrieval with explainable ordering |
 | v1.2 | planned | More fusion adapters; extended export formats; screenshots and demo assets |
 | Future | exploring | Team-shared storage, memory merge suggestions, Loop/task-completion linking |
