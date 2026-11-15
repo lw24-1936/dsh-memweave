@@ -96,7 +96,7 @@ test('factory contributes three settings tabs with the required ids and order', 
   }));
   assert.deepEqual(tabs, [
     { id: 'memweave-storage', order: 10, label: '存储与分类' },
-    { id: 'memweave-memories', order: 20, label: '技能浏览' },
+    { id: 'memweave-memories', order: 20, label: '记忆浏览' },
     { id: 'memweave-fusion', order: 30, label: '融合' },
   ]);
   for (const entry of registrations) {

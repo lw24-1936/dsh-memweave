@@ -34,7 +34,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - **Forced anti-pattern recall**: relevant anti-patterns are never buried outside the top results.
 - **Measurable Loops**: mandatory metric name/target/unit/cadence; trends from round three.
 - **Deterministic task networks**: six-node scaffold with `dependsOn` and `human/agent/hybrid` executors.
-- **Three settings tabs**: `存储与分类`, `技能浏览`, `融合`.
+- **Three settings tabs**: `存储与分类`, `记忆浏览`, `融合`.
 - **Same-origin Host API**: `/memweave/api` for snapshot, memories, detail, verify, storage and fusion writes, with loopback/origin trust fence.
 - **Atomic local storage**: exclusive `wx` temp file plus `rename`, orphan `.tmp.*` cleanup.
 - **Read-only fusion layer**: file/service/tool-name probes for five compatible memory plugins; explicit import/export only.

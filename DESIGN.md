@@ -16,7 +16,7 @@
 4. **融合层**：固定五个内置记忆适配器；只在显式导入/导出时读取兼容文件，数据仍落在织忆自己的区域。
 
 共 **10 个 Host 工具**：7 个原工具 + `memweave_fusion_status` / `memweave_import` / `memweave_export`。  
-共 **3 个设置标签页**：`存储与分类` / `技能浏览` / `融合`。
+共 **3 个设置标签页**：`存储与分类` / `记忆浏览` / `融合`。
 
 ---
 
@@ -30,7 +30,7 @@
 | 2 | Client 标签页“调用 Host 半的 `memweave_memory_verify`” | Client 与 Host 之间没有“直接调用工具”的 RPC；工具只面向模型 | Host 暴露同源 `/memweave/api` 路由；路由与工具调用**同一个 core 函数**（`verifyMemory`），验证按钮确实走 Host 半逻辑 |
 | 3 | `dsh.client` “指向 `./client`” | 实际解析规则：`package.json.exports["./client"]` 给出浏览器脚本路径；`dsh.client = { platform, inject, external, immediately }`。该脚本必须是 classic script，调用 `window.__ModuleLoader__.load({ id, factory })`，不能是裸 ESM | `exports["./client"] = "./client/index.js"`；`client/index.js` 自己注册 factory，内部 `require('react')` |
 | 4 | `patches/aggregate.yaml` 的 `optional: true` 由安装器跳过缺失包 | Loader patch **没有 `optional` 行语义**；缺失包的行会变成 failed fiber（不阻断其它行，但留下失败记录） | 默认 patch 只插自身；`aggregate.yaml` 作为声明式单一事实来源；`scripts/prepare-aggregate.mjs` 检查本机已安装包，只把可用行写入可安装的 `aggregate/cordis.patch.yml`，实现“缺失即跳过”的等价效果 |
-| 5 | 分类点击“跳转并预置筛选” | 设置标签页由 shell 内部状态控制，未向注册者暴露 `setActiveTab`；读取/操作宿主 DOM 被明令禁止 | 分类卡在本页内展开该分类的记忆明细（真正的跳转语义），同时把筛选写入共享 UI store；用户切到“技能浏览”时自动消费该筛选 |
+| 5 | 分类点击“跳转并预置筛选” | 设置标签页由 shell 内部状态控制，未向注册者暴露 `setActiveTab`；读取/操作宿主 DOM 被明令禁止 | 分类卡在本页内展开该分类的记忆明细（真正的跳转语义），同时把筛选写入共享 UI store；用户切到“记忆浏览”时自动消费该筛选 |
 | 6 | `workspaceOf(exec)` | 工具调用可取 `exec.agent.session.header.cwd`；设置页请求没有 agent | 工具：session cwd → `.memweave/`；API：最近一次工具调用看到的 workspace → Host 启动目录，并在 UI 明示来源，避免假装知道 |
 | 7 | `anti_pattern` 无 `antiPatterns` → `INVALID_ARGUMENT`；同时 `rationale required` | `rationale` 在 schema 层 required 时，空串仍能到达 `execute` | schema 保持 required；`execute` 额外做 trim 空校验，抛 `HarnessError('INVALID_ARGUMENT')` |
 | 8 | `invalid` 后 `<0.3` 才 `disputed` | 置信度 ≥0.3 时状态如何未定义 | 明确：≥0.3 保持原状态（`candidate` 仍候选，`verified` 仍验证），只降置信度；`superseded` 拒绝验证 |
@@ -67,7 +67,7 @@
 ┌──────────────────────────── Browser (Client half) ────────────────────────────┐
 │ settings.plugins.tab  ×3                                                     │
 │  ├─ memweave-storage  存储与分类（概览、路径、分类下钻）                    │
-│  ├─ memweave-memories 技能浏览（筛选、列表、详情、验证）                    │
+│  ├─ memweave-memories 记忆浏览（筛选、列表、详情、验证）                    │
 │  └─ memweave-fusion   融合（固定适配器、开关、方向、聚合状态）                    │
 │            │ fetch /memweave/api/*（同源、loopback 信任围栏）                │
 └────────────┼─────────────────────────────────────────────────────────────────┘
@@ -503,7 +503,7 @@ window.__ModuleLoader__.load({
 - `ctx.locale.register('memweave', { zh, en })`；
 - 三次 `ctx.slots.inject('settings.plugins.tab', () => ctx.slots.register({ id, order, label, locale:'memweave' }, Component))`：
   - `memweave-storage` / order 10 / `存储与分类`
-  - `memweave-memories` / order 20 / `技能浏览`
+  - `memweave-memories` / order 20 / `记忆浏览`
   - `memweave-fusion` / order 30 / `融合`
 
 ### 12.2 纪律
@@ -523,11 +523,11 @@ window.__ModuleLoader__.load({
 
 - 顶部：有效存储根、来源标签（已配置 / 会话 workspace / 最近会话 / Host 启动目录）、目录存在状态。
 - 路径输入 + 保存/清除；相对路径在前端先做提示，Host 仍会二次拒绝。
-- 五张分类卡：事实/程序/判断/反模式/关系；点击后在本页展开该分类明细（预置筛选），并把筛选写入共享 UI store，供“技能浏览”首次挂载时消费。
+- 五张分类卡：事实/程序/判断/反模式/关系；点击后在本页展开该分类明细（预置筛选），并把筛选写入共享 UI store，供“记忆浏览”首次挂载时消费。
 - 状态概览：verified/candidate/disputed/superseded 计数。
 - 刷新按钮；错误横幅。
 
-**技能浏览**
+**记忆浏览**
 
 - 筛选：状态（默认 verified）、类型多选、关键词、每页 50。
 - 列表：类型、内容摘要、置信度符号、状态、最近验证时间。
@@ -582,7 +582,7 @@ window.__ModuleLoader__.load({
 | 1 三个标签页可见 | client 注册 `memweave-storage/memories/fusion`，order 10/20/30 |
 | 2 绝对路径生效、清除回退 | Config `storageRoot` + resolve 优先级；工具与 API 共用 |
 | 3 分类概览五类、点击跳转预置筛选 | 存储页五卡 + 本页下钻 + 共享筛选 |
-| 4 列表+详情+验证按钮 | 技能浏览页 + `/api/verify` → `verifyMemory` |
+| 4 列表+详情+验证按钮 | 记忆浏览页 + `/api/verify` → `verifyMemory` |
 | 5 融合页覆盖五个内置适配器、开关写 settings | fusion registry + `/api/fusion` → configEditor |
 | 6 fusion_status 返回 plugins/aggregateBundle | `detectFusion` + `ctx.get('memweaveAggregate')` |
 | 7 import dryRun 不写、正式写 candidate/0.4 | `importFromPlugin` |
@@ -612,7 +612,7 @@ window.__ModuleLoader__.load({
 # 1) 本地安装到 desktop profile
 #    plugin_manager -> install_bundle -> target = E:\...\skill-work\dsh-memweave
 # 2) 重启或等待 HMR，打开 设置 → 插件
-# 3) 三个标签页出现：存储与分类 / 技能浏览 / 融合
+# 3) 三个标签页出现：存储与分类 / 记忆浏览 / 融合
 # 4) 用模型调用 memweave_decompose 等工具，或直接打开页面
 ```
 
