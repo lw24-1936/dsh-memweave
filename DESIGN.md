@@ -284,7 +284,7 @@ dsh-memweave/
 
 - 参数：无。
 - 返回 `{ plugins, aggregateBundle }`；每项 `{ key, label, type, detectedBy, available, enabled, direction, detail }`。
-- 渲染：`检测到 N 个兼容目标，A 个可用，M 个已启用` + 每行 + 聚合状态。
+- 渲染：`检测到 N 个记忆适配器，A 个可用，M 个已启用` + 每行 + 聚合状态。
 
 ### 6.9 `memweave_import`
 

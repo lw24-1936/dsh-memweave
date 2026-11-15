@@ -21,6 +21,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 - Deduplicated screenshots and aligned README, USAGE, and DESIGN with the fixed built-in memory adapters and the installed full-stack plugin section.
+- Reworded the storage and fusion introductions so the five fixed memory adapters, installed full-stack plugins, and read-only/display boundaries are explicit.
 
 ### Planned
 - Task-network update tool (`memweave_network_update`).
