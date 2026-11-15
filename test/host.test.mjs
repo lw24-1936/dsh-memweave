@@ -433,6 +433,32 @@ test('fusion tool probes use the actual xfy tool names', async () => {
   }
 });
 
+test('an installed compatible package is available without data or tools', async () => {
+  const home = await makeWorkspace('memweave-home-');
+  const workspace = await makeWorkspace();
+  const previousHome = process.env.DSH_HOME;
+  const previousProfile = process.env.DSH_PROFILE;
+  try {
+    const packageRoot = path.join(home, 'profiles', 'probe', 'node_modules', 'dsh-memory-plus');
+    await fs.mkdir(packageRoot, { recursive: true });
+    await fs.writeFile(path.join(packageRoot, 'package.json'), '{"name":"dsh-memory-plus"}', 'utf8');
+    process.env.DSH_HOME = home;
+    process.env.DSH_PROFILE = 'probe';
+    const ctx = { tools: { schemas: () => [] } };
+    const status = await detectFusion({ ctx, workspace, settings: {} });
+    const plus = status.plugins.find(plugin => plugin.key === 'dsh-memory-plus');
+    assert.equal(plus.available, true);
+    assert.equal(plus.detectedBy, 'installed');
+  } finally {
+    if (previousHome === undefined) delete process.env.DSH_HOME;
+    else process.env.DSH_HOME = previousHome;
+    if (previousProfile === undefined) delete process.env.DSH_PROFILE;
+    else process.env.DSH_PROFILE = previousProfile;
+    await cleanup(home);
+    await cleanup(workspace);
+  }
+});
+
 test('fusion file probes still use the session workspace with a custom storageRoot', async () => {
   const workspace = await makeWorkspace();
   const store = await makeWorkspace();

@@ -95,12 +95,13 @@ window.__ModuleLoader__.load({
       statusDisputed: '有争议',
       statusSuperseded: '已取代',
       fusionTitle: '融合',
-      fusionIntro: '只读探测兼容记忆插件；开关只决定织忆是否读取或写入自己的导出区，不修改其他插件。',
-      fusionSummary: '检测到 {count} 个兼容插件，{enabled} 个已启用',
+      fusionIntro: '只读探测兼容记忆插件；安装或检测到即显示可用。启用只解除显式导入/导出的方向限制，不会自动同步，也不修改其他插件。',
+      fusionSummary: '检测到 {count} 个兼容目标，{available} 个可用，{enabled} 个已启用',
       detectedBy: '检测方式',
       byFile: '文件',
       byService: '服务',
       byTool: '工具',
+      byInstalled: '安装',
       saved: '已保存',
       available: '已连接',
       unavailable: '不可用',
@@ -194,12 +195,13 @@ window.__ModuleLoader__.load({
       statusDisputed: 'Disputed',
       statusSuperseded: 'Superseded',
       fusionTitle: 'Fusion',
-      fusionIntro: 'Read-only probes over compatible memory plugins. Switches only decide whether Memweave reads or writes its own export area; other plugins are untouched.',
-      fusionSummary: '{count} compatible plugins detected, {enabled} enabled',
+      fusionIntro: 'Read-only probes over compatible memory plugins; installed or detected targets show as available. Enabling only unlocks explicit import/export directions and never auto-syncs or edits another plugin.',
+      fusionSummary: '{count} compatibility targets, {available} available, {enabled} enabled',
       detectedBy: 'Detected by',
       byFile: 'File',
       byService: 'Service',
       byTool: 'Tool',
+      byInstalled: 'Installed',
       saved: 'Saved',
       available: 'Connected',
       unavailable: 'Unavailable',
@@ -855,12 +857,13 @@ window.__ModuleLoader__.load({
 
       const fusion = state.status === 'ready' ? state.fusion : null;
       const enabledCount = fusion === null ? 0 : fusion.plugins.filter(plugin => plugin.enabled).length;
+      const availableCount = fusion === null ? 0 : fusion.plugins.filter(plugin => plugin.available).length;
       const directionOptions = [
         ['read', t('directionRead')],
         ['write', t('directionWrite')],
         ['both', t('directionBoth')],
       ];
-      const detectionLabels = { file: t('byFile'), service: t('byService'), tool: t('byTool') };
+      const detectionLabels = { file: t('byFile'), service: t('byService'), tool: t('byTool'), installed: t('byInstalled') };
 
       return h('div', { className: 'mw-root mw-stack' }, [
         h(Styles, { key: 'styles' }),
@@ -877,7 +880,7 @@ window.__ModuleLoader__.load({
 
         fusion === null ? null : h('div', { className: 'mw-card', key: 'summary' }, [
           h('div', { className: 'mw-between', key: 'head' }, [
-            h('strong', { key: 'summary' }, t('fusionSummary', { count: fusion.plugins.length, enabled: enabledCount })),
+            h('strong', { key: 'summary' }, t('fusionSummary', { count: fusion.plugins.length, available: availableCount, enabled: enabledCount })),
             h('span', { className: `mw-badge${fusion.aggregateBundle ? ' mw-badge-ok' : ''}`, key: 'aggregate' }, fusion.aggregateBundle ? t('aggregateOn') : t('aggregateOff')),
           ]),
           h('button', { className: 'mw-button', type: 'button', style: { marginTop: 8 }, onClick: load }, t('refresh')),
@@ -904,7 +907,7 @@ window.__ModuleLoader__.load({
                   key: 'check',
                   type: 'checkbox',
                   checked: plugin.enabled,
-                  disabled: busyKey === plugin.key,
+                  disabled: busyKey === plugin.key || (!plugin.available && !plugin.enabled),
                   onChange: event => { update(plugin, { enabled: event.currentTarget.checked }); },
                 }),
                 t('enable'),
@@ -913,7 +916,7 @@ window.__ModuleLoader__.load({
                 key: 'select',
                 className: 'mw-select',
                 value: plugin.direction,
-                disabled: busyKey === plugin.key,
+                disabled: busyKey === plugin.key || !plugin.available,
                 onChange: event => { update(plugin, { direction: event.currentTarget.value }); },
               }, directionOptions.map(([value, label]) => h('option', { key: value, value }, label))),
             ]),

@@ -12,6 +12,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Fixed
 - Fusion file probes keep the session workspace when `storageRoot` points at a custom directory. Add regression coverage for storage resolution and Fusion detection.
 - Fusion tool probes now recognize the real `mem_search` / `mem_pack` tools of `dsh-memory-xfy`, and the unique `memory_*` tools of `dsh-task-memory`.
+- Fusion reports a compatible package installed in the active profile as available even before data/tools are found; the summary shows available and enabled counts, and uninstalled targets cannot be newly enabled.
 
 ### Planned
 - Task-network update tool (`memweave_network_update`).
