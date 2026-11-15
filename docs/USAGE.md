@@ -463,6 +463,8 @@ memweave_export(pluginKey="dsh-memory-xfy", statusFilter="verified", limit=50)
 
 聚合只负责组合兼容行，不改变融合读写行为。安装方法见 [README 的可选聚合层](../README.md#aggregate)。
 
+周期性巡检与新增适配的流程见 [融合适配巡检](./FUSION-MAINTENANCE.md)。
+
 ---
 
 ## 5. 常用场景
