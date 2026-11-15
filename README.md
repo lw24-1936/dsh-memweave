@@ -13,7 +13,7 @@
   <img alt="version" src="https://img.shields.io/badge/version-1.0.0-4f46e5?style=flat-square" />
   <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a?style=flat-square" />
   <img alt="DSH" src="https://img.shields.io/badge/DSH-0.2.x-0ea5e9?style=flat-square" />
-  <img alt="tests" src="https://img.shields.io/badge/tests-37%20passing-brightgreen?style=flat-square" />
+  <img alt="tests" src="https://img.shields.io/badge/tests-41%20passing-brightgreen?style=flat-square" />
   <img alt="node" src="https://img.shields.io/badge/Node-%5E22.19%20%7C%7C%20%3E%3D24-339933?style=flat-square" />
 </p>
 
@@ -50,6 +50,7 @@
 - [路线图](#roadmap)
 - [设计文档](#design)
 - [使用指南](./docs/USAGE.md)
+- [自动学习](./docs/AUTO-LEARNING.md)
 - [贡献](#contributing)
 - [License](#license)
 
@@ -88,6 +89,7 @@
 | 🕸️ | **任务网络** | 目标拆成带依赖的任务节点，并自动注入相关反模式警告 |
 | 🖥️ | **三个设置标签页** | 存储与分类、记忆浏览、融合，全部读写同一份 Host 数据 |
 | 🔌 | **只读融合层** | 五个固定内置适配器；不改配置、不劫持工具、不自动同步、不自动探测 |
+| 🧠 | **自动学习（可选）** | 新会话+历史回填；只提取用户明确决定/纠正，脱敏，不保存原始对话或工具输出 |
 | 🔒 | **本地原子存储** | 独占临时文件 + `rename`；单文件写入原子 |
 | 📦 | **零第三方运行时依赖** | Host 只依赖 DSH SDK 与 Node 内置模块；Client 只用宿主 React |
 
@@ -403,6 +405,24 @@ memweave_export(pluginKey="dsh-memory-xfy", statusFilter="verified")
 
 导入的 `anti_pattern` 如果没有反模式说明，会被降级为 `fact`，避免把违反契约的数据写进库。
 
+## 自动学习（可选）
+
+自动学习默认关闭。开启后：
+
+- 监听新会话的 `user/message`，并从历史会话回填；
+- 只提取用户明确的决定/纠正，不保存原始对话、助手推理或工具输出；
+- 自动脱敏密钥/token；
+- 明确决定在实时会话可自动验证，其余写为 `candidate`；
+- 历史回填统一写为 `candidate`，不会自动验证；
+- 可按项目或技能名限定范围；
+- 历史回填在“存储与分类”里手动触发，有界且可重复。
+
+不会自动把记忆注入每轮对话；Agent 仍通过 `memweave_memory_find` 检索。
+
+完整边界与操作见 [自动学习](./docs/AUTO-LEARNING.md)。
+
+![自动学习设置](docs/screenshots/usage-auto-learning.png)
+
 ---
 
 <a id="aggregate"></a>
@@ -451,7 +471,7 @@ dsh-memweave/
 ├── aggregate/           # 可选聚合包（marker + 生成的 patch）
 ├── scripts/             # prepare-aggregate.mjs
 ├── locale/              # zh/en 显示元数据
-├── test/                # 37 个测试：Host、API、paths、client、aggregate
+├── test/                # 41 个测试：Host、API、paths、client、aggregate
 ├── DESIGN.md            # 完整设计文档与 ADR
 └── README.md
 ```
@@ -495,7 +515,7 @@ node scripts/prepare-aggregate.mjs --profile <profile-dir>
 
 | 版本 | 状态 | 内容 |
 |---|---|---|
-| **v1.0** | ✅ 已发布 | 10 个工具、三个设置页、融合层、聚合层、37 个测试 |
+| **v1.0** | ✅ 已发布 | 10 个工具、三个设置页、融合层、聚合层、41 个测试 |
 | v1.1 | 计划 | 任务网络更新工具；`superseded` 工作流；向量检索（保留可解释排序） |
 | v1.2 | 计划 | 更多融合适配器；导出格式扩展；截图与演示素材 |
 | 未来 | 探索 | 团队级共享存储、记忆合并建议、Loop 与任务完成自动关联 |

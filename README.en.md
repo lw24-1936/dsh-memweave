@@ -13,7 +13,7 @@
   <img alt="version" src="https://img.shields.io/badge/version-1.0.0-4f46e5?style=flat-square" />
   <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a?style=flat-square" />
   <img alt="DSH" src="https://img.shields.io/badge/DSH-0.2.x-0ea5e9?style=flat-square" />
-  <img alt="tests" src="https://img.shields.io/badge/tests-37%20passing-brightgreen?style=flat-square" />
+  <img alt="tests" src="https://img.shields.io/badge/tests-41%20passing-brightgreen?style=flat-square" />
   <img alt="node" src="https://img.shields.io/badge/Node-%5E22.19%20%7C%7C%20%3E%3D24-339933?style=flat-square" />
 </p>
 
@@ -50,6 +50,7 @@
 - [Roadmap](#roadmap)
 - [Design](#design)
 - [User guide (中文)](./docs/USAGE.md)
+- [Automatic learning](./docs/AUTO-LEARNING.md)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -88,6 +89,7 @@ Two cross-cutting rules:
 | 🕸️ | **Task networks** | Goals become dependency-aware task nodes with anti-pattern warnings |
 | 🖥️ | **Three settings tabs** | Storage & categories, memories, fusion — one Host data source |
 | 🔌 | **Read-only fusion** | Five fixed built-in adapters; no config edits, tool hijacking, auto-sync, or auto-detection |
+| 🧠 | **Automatic learning (optional)** | Live sessions + history backfill; explicit decisions/corrections only, redacted; no raw conversations or tool output |
 | 🔒 | **Atomic local storage** | Exclusive temp file + `rename`; single-file writes are atomic |
 | 📦 | **No third-party runtime deps** | Host uses DSH SDK + Node built-ins; Client uses host React only |
 
@@ -391,6 +393,23 @@ memweave_export(pluginKey="dsh-memory-xfy", statusFilter="verified")
 
 An imported `anti_pattern` without invalidation notes is downgraded to `fact`, keeping the memory contract intact.
 
+## Automatic learning (optional)
+
+Automatic learning is off by default. When enabled:
+
+- observes `user/message` in new sessions and can backfill history;
+- extracts only explicit user decisions/corrections; never raw conversations, assistant reasoning, or tool output;
+- redacts keys/tokens;
+- auto-verifies explicit decisions in live sessions; writes the rest as `candidate`;
+- can be limited by project or skill name;
+- history backfill is a bounded, explicit action in Storage & categories and always writes candidates.
+
+It does not inject memories into every turn; the agent still retrieves them with `memweave_memory_find`.
+
+See [Automatic learning](./docs/AUTO-LEARNING.md) for the full boundary.
+
+![Automatic learning settings](docs/screenshots/usage-auto-learning.png)
+
 ---
 
 <a id="aggregate"></a>
@@ -439,7 +458,7 @@ dsh-memweave/
 ├── aggregate/           # Optional aggregate package (marker + generated patch)
 ├── scripts/             # prepare-aggregate.mjs
 ├── locale/              # zh/en display metadata
-├── test/                # 37 tests: Host, API, paths, client, aggregate
+├── test/                # 41 tests: Host, API, paths, client, aggregate
 ├── DESIGN.md            # Full design and ADR record
 └── README.md
 ```
@@ -484,7 +503,7 @@ Tests need resolvable `@deepseek-ai/dsh-tools`, `@deepseek-ai/dsh-llm` and `@dee
 
 | Version | Status | Content |
 |---|---|---|
-| **v1.0** | ✅ released | 10 tools, three settings tabs, fusion, aggregate, 37 tests |
+| **v1.0** | ✅ released | 10 tools, three settings tabs, fusion, aggregate, 41 tests |
 | v1.1 | planned | Task-network update tool; `superseded` workflow; vector retrieval with explainable ordering |
 | v1.2 | planned | More fusion adapters; extended export formats; screenshots and demo assets |
 | Future | exploring | Team-shared storage, memory merge suggestions, Loop/task-completion linking |

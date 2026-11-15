@@ -61,6 +61,7 @@ test('GET snapshot and memories return the shared core data', async () => {
     assert.equal(snapshotBody.ok, true);
     assert.equal(snapshotBody.snapshot.storage.total, 1);
     assert.equal(snapshotBody.snapshot.fusion.plugins.length, 5);
+    assert.equal(snapshotBody.snapshot.learning.enabled, false);
 
     const list = await call(route, makeRequest({ url: '/memweave/api/memories?status=verified&limit=10' }));
     const listBody = parsed(list);
@@ -170,6 +171,27 @@ test('unsupported methods and unknown routes are explicit', async () => {
     assert.equal(method.status, 405);
     const missing = await call(route, makeRequest({ url: '/memweave/api/nope' }));
     assert.equal(missing.status, 404);
+  } finally {
+    await cleanup(workspace);
+  }
+});
+
+test('POST learning saves the opt-in configuration', async () => {
+  const { workspace, route, edits } = await setup();
+  try {
+    const response = await call(route, makeRequest({
+      method: 'POST',
+      url: '/memweave/api/learning',
+      headers: { 'content-type': 'application/json' },
+      body: { enabled: true, scope: 'dsh-frontend-page-craft', autoVerify: false, historyLimit: 500 },
+    }));
+    assert.equal(response.status, 200);
+    assert.deepEqual(edits.at(-1).next.autoLearn, {
+      enabled: true,
+      scope: 'dsh-frontend-page-craft',
+      autoVerify: false,
+      historyLimit: 500,
+    });
   } finally {
     await cleanup(workspace);
   }

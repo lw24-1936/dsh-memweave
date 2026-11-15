@@ -418,6 +418,15 @@ else                                      → stable
 - 安装聚合包 = 安装一个只做“组合声明 + 标记”的 bundle；被聚合插件的配置、运行时、工具都不被改写。
 - 明确限制：当前 DSH 不支持“同一 bundle 多 patch 按参数选择”，因此聚合不是 `dsh plugin add --patch aggregate`；而是安装独立的 `aggregate/` 包。这个等价方案保留了“缺失即跳过、独立安装不受影响”的验收语义。
 
+### 9.6 自动学习
+
+- 默认关闭，显式开启；只监听 `session/event` 的 `user/message`，不处理 assistant 或工具输出。
+- 历史回填通过 `sessionQuery.listSessions()` / `readSession()`，单次有界（默认 50，最多 500）。
+- 提取器只保留含明确决定/纠正信号的句子；写入 `judgment`/`procedure`，带 `session:<id>` 来源。
+- 脱敏规则覆盖私钥、常见 API key、Bearer token、password/token/secret 键值。
+- 明确强语气决定在实时会话可自动 `verified`；历史回填统一写 `candidate`。
+- `scope` 可按 cwd/消息文本限定项目或技能；不自动注入每轮对话。
+
 ---
 
 ## 10. 配置与持久化
@@ -427,6 +436,12 @@ else                                      → stable
 ```js
 export const Config = z.object({
   storageRoot: z.string().default('').description('组织记忆存储根目录的绝对路径。留空则使用当前 workspace 的 .memweave/ 目录。'),
+  autoLearn: z.object({
+    enabled: z.boolean().default(false),
+    scope: z.string().default(''),
+    autoVerify: z.boolean().default(true),
+    historyLimit: z.number().default(50),
+  }).default({ enabled: false, scope: '', autoVerify: true, historyLimit: 50 }),
   fusion: z.dict(z.object({
     enabled: z.boolean().default(false),
     direction: z.union(['read', 'write', 'both']).default('read'),

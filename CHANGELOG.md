@@ -9,6 +9,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Added
 - A complete Chinese usage guide with real UI screenshots: `docs/USAGE.md`.
 - Five fixed built-in memory adapters with explicit import/export directions.
+- Optional safe automatic learning: live user-message observation, bounded history backfill, secret redaction, explicit-decision verification, and project/skill scoping.
 
 ### Fixed
 - File-bridge compatibility targets ship built-in adapters, so all five targets remain usable without an external package; data is still only imported when matching files exist.

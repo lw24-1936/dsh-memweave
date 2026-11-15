@@ -42,6 +42,21 @@ window.__ModuleLoader__.load({
       optional: '可选',
       pathPlaceholder: '例如 D:\\memory\\memweave',
       pathHint: '推荐留空：每个 workspace 独立使用 .memweave/。只有需要跨 workspace 共享或集中备份时，才填写可写的绝对路径；清除后回退到当前 workspace。',
+      learningTitle: '自动学习',
+      learningIntro: '只从用户明确的决定/纠正中提取记忆；自动脱敏；不保存原始对话或工具输出。',
+      learningEnabled: '启用自动学习',
+      learningScope: '限定项目或技能（留空 = 全部）',
+      learningScopePlaceholder: '例如：dsh-frontend-page-craft',
+      learningVerify: '明确决定自动验证',
+      learningLimit: '历史回填会话数',
+      learningSave: '保存学习设置',
+      learningBackfill: '回填历史',
+      learningStatus: '已学习 {learned} 条，跳过 {skipped}，错误 {errors}',
+      learningBackfillDone: '已回填 {sessions} 个会话，学习 {learned} 条',
+      learningHint: '历史回填是有界操作；不会保存完整对话、工具输出或密钥。',
+      learningSaveFailed: '自动学习设置保存失败',
+      enabled: '已启用',
+      disabled: '未启用',
       save: '保存',
       saving: '保存中…',
       clear: '清除',
@@ -137,6 +152,21 @@ window.__ModuleLoader__.load({
       optional: 'Optional',
       pathPlaceholder: 'e.g. D:\\memory\\memweave',
       pathHint: 'Recommended: leave empty so each workspace keeps its own .memweave/. Set a writable absolute path only for cross-workspace sharing or central backup; clearing falls back to the current workspace.',
+      learningTitle: 'Automatic learning',
+      learningIntro: 'Extracts only explicit user decisions/corrections, redacts secrets, and never stores raw conversations or tool output.',
+      learningEnabled: 'Enable automatic learning',
+      learningScope: 'Limit to project or skill (empty = all)',
+      learningScopePlaceholder: 'e.g. dsh-frontend-page-craft',
+      learningVerify: 'Auto-verify explicit decisions',
+      learningLimit: 'History sessions to backfill',
+      learningSave: 'Save learning settings',
+      learningBackfill: 'Backfill history',
+      learningStatus: '{learned} learned, {skipped} skipped, {errors} errors',
+      learningBackfillDone: 'Backfilled {sessions} sessions and learned {learned}',
+      learningHint: 'Backfill is bounded; raw conversations, tool output, and secrets are not stored.',
+      learningSaveFailed: 'Could not save automatic learning settings',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
       save: 'Save',
       saving: 'Saving…',
       clear: 'Clear',
@@ -282,6 +312,8 @@ window.__ModuleLoader__.load({
       verify: async body => (await request('/verify', { body })).result,
       settings: async storageRoot => (await request('/settings', { body: { storageRoot } })).result,
       fusion: async body => (await request('/fusion', { body })).result,
+      learning: async body => (await request('/learning', { body })).result,
+      backfill: async body => (await request('/learning/backfill', { body })).result,
     };
 
     /** Confidence symbols mirrored from the Host renderer. */
@@ -403,6 +435,12 @@ window.__ModuleLoader__.load({
       const [notice, setNotice] = useState(null);
       const [drillType, setDrillType] = useState(null);
       const [drill, setDrill] = useState({ status: 'idle' });
+      const [learnEnabled, setLearnEnabled] = useState(false);
+      const [learnScope, setLearnScope] = useState('');
+      const [learnVerify, setLearnVerify] = useState(true);
+      const [learnLimit, setLearnLimit] = useState(50);
+      const [learningBusy, setLearningBusy] = useState(false);
+      const [learningNotice, setLearningNotice] = useState(null);
 
       const load = useCallback(async () => {
         setState({ status: 'loading' });
@@ -411,6 +449,11 @@ window.__ModuleLoader__.load({
             const snapshot = await api.snapshot();
             setState({ status: 'ready', snapshot });
             setDraft(snapshot.storage.configuredRoot ?? '');
+            const learning = snapshot.learning ?? {};
+            setLearnEnabled(learning.enabled === true);
+            setLearnScope(typeof learning.scope === 'string' ? learning.scope : '');
+            setLearnVerify(learning.autoVerify !== false);
+            setLearnLimit(Number.isFinite(Number(learning.historyLimit)) ? Number(learning.historyLimit) : 50);
             return;
           } catch (error) {
             if (attempt === 1) {
@@ -439,6 +482,7 @@ window.__ModuleLoader__.load({
       }, [state]);
 
       const total = state.status === 'ready' ? state.snapshot.storage.counts.types : null;
+      const learning = state.status === 'ready' ? state.snapshot.learning : null;
 
       async function save() {
         setSaving(true);
@@ -466,6 +510,39 @@ window.__ModuleLoader__.load({
           setNotice({ tone: 'error', text: messageOf(error) });
         } finally {
           setSaving(false);
+        }
+      }
+
+      async function saveLearning() {
+        setLearningBusy(true);
+        setLearningNotice(null);
+        try {
+          await api.learning({
+            enabled: learnEnabled,
+            scope: learnScope,
+            autoVerify: learnVerify,
+            historyLimit: Number(learnLimit),
+          });
+          setLearningNotice({ tone: 'ok', text: t('saved') });
+          await load();
+        } catch (error) {
+          setLearningNotice({ tone: 'error', text: `${t('learningSaveFailed')}：${messageOf(error)}` });
+        } finally {
+          setLearningBusy(false);
+        }
+      }
+
+      async function backfillLearning() {
+        setLearningBusy(true);
+        setLearningNotice(null);
+        try {
+          const result = await api.backfill({ limit: Number(learnLimit) });
+          setLearningNotice({ tone: 'ok', text: t('learningBackfillDone', { sessions: result.sessions, learned: result.learned }) });
+          await load();
+        } catch (error) {
+          setLearningNotice({ tone: 'error', text: messageOf(error) });
+        } finally {
+          setLearningBusy(false);
         }
       }
 
@@ -517,7 +594,7 @@ window.__ModuleLoader__.load({
 
         h('div', { className: 'mw-card', key: 'editor' }, [
           h('div', { className: 'mw-row', key: 'label', style: { gap: 6 } }, [
-            h('label', { className: 'mw-muted', htmlFor: 'mw-storage-path' }, t('pathLabel')),
+            h('label', { className: 'mw-muted', key: 'label', htmlFor: 'mw-storage-path' }, t('pathLabel')),
             h('span', { className: 'mw-badge', key: 'optional' }, t('optional')),
           ]),
           h('div', { className: 'mw-row', key: 'row', style: { marginTop: 5 } }, [
@@ -537,6 +614,69 @@ window.__ModuleLoader__.load({
             h('button', { key: 'refresh', className: 'mw-button', type: 'button', disabled: saving, onClick: load }, t('refresh')),
           ]),
           h('div', { className: 'mw-muted mw-hint', key: 'hint', style: { marginTop: 5 } }, t('pathHint')),
+        ]),
+
+        h('div', { className: 'mw-card', key: 'learning' }, [
+          h('div', { className: 'mw-between', key: 'head' }, [
+            h('strong', { key: 'title' }, t('learningTitle')),
+            h('span', { className: 'mw-badge', key: 'state' }, learnEnabled ? t('enabled') : t('disabled')),
+          ]),
+          h('p', { className: 'mw-muted', key: 'intro' }, t('learningIntro')),
+          learningNotice === null ? null : h(Notice, { key: 'notice', tone: learningNotice.tone }, learningNotice.text),
+          h('label', { className: 'mw-row', key: 'enabled', style: { gap: 7, marginTop: 7 } }, [
+            h('input', {
+              key: 'check',
+              type: 'checkbox',
+              checked: learnEnabled,
+              onChange: event => setLearnEnabled(event.currentTarget.checked),
+            }),
+            h('span', { key: 'label' }, t('learningEnabled')),
+          ]),
+          h('div', { className: 'mw-row', key: 'scope', style: { marginTop: 8 } }, [
+            h('label', { className: 'mw-muted', key: 'label', htmlFor: 'mw-learning-scope', style: { flex: '0 0 220px' } }, t('learningScope')),
+            h('input', {
+              key: 'input',
+              id: 'mw-learning-scope',
+              className: 'mw-input',
+              style: { flex: '1 1 220px' },
+              type: 'text',
+              value: learnScope,
+              placeholder: t('learningScopePlaceholder'),
+              spellCheck: false,
+              onChange: event => setLearnScope(event.currentTarget.value),
+            }),
+          ]),
+          h('label', { className: 'mw-row', key: 'verify', style: { gap: 7, marginTop: 8 } }, [
+            h('input', {
+              key: 'check',
+              type: 'checkbox',
+              checked: learnVerify,
+              onChange: event => setLearnVerify(event.currentTarget.checked),
+            }),
+            h('span', { key: 'label' }, t('learningVerify')),
+          ]),
+          h('div', { className: 'mw-row', key: 'actions', style: { marginTop: 8 } }, [
+            h('label', { className: 'mw-muted', key: 'label', htmlFor: 'mw-learning-limit' }, t('learningLimit')),
+            h('input', {
+              key: 'limit',
+              id: 'mw-learning-limit',
+              className: 'mw-input',
+              style: { width: '86px' },
+              type: 'number',
+              min: 1,
+              max: 500,
+              value: learnLimit,
+              onChange: event => setLearnLimit(Math.max(1, Math.min(500, Number(event.currentTarget.value) || 1))),
+            }),
+            h('button', { key: 'save', className: 'mw-button mw-button-primary', type: 'button', disabled: learningBusy, onClick: saveLearning }, t('learningSave')),
+            h('button', { key: 'backfill', className: 'mw-button', type: 'button', disabled: learningBusy || !learnEnabled, onClick: backfillLearning }, t('learningBackfill')),
+          ]),
+          h('p', { className: 'mw-muted mw-hint', key: 'hint', style: { marginTop: 5 } }, t('learningHint')),
+          learning === null ? null : h('p', { className: 'mw-muted mw-hint', key: 'stats', style: { marginTop: 5 } }, t('learningStatus', {
+            learned: learning.learned ?? 0,
+            skipped: learning.skipped ?? 0,
+            errors: learning.errors ?? 0,
+          })),
         ]),
 
         total === null ? null : h('div', { className: 'mw-card', key: 'categories' }, [
@@ -899,7 +1039,7 @@ window.__ModuleLoader__.load({
                   disabled: busyKey === plugin.key,
                   onChange: event => { update(plugin, { enabled: event.currentTarget.checked }); },
                 }),
-                t('enable'),
+                h('span', { key: 'label' }, t('enable')),
               ]),
               h('select', {
                 key: 'select',
