@@ -13,7 +13,7 @@
   <img alt="version" src="https://img.shields.io/badge/version-1.0.0-4f46e5?style=flat-square" />
   <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a?style=flat-square" />
   <img alt="DSH" src="https://img.shields.io/badge/DSH-0.2.x-0ea5e9?style=flat-square" />
-  <img alt="tests" src="https://img.shields.io/badge/tests-35%20passing-brightgreen?style=flat-square" />
+  <img alt="tests" src="https://img.shields.io/badge/tests-37%20passing-brightgreen?style=flat-square" />
   <img alt="node" src="https://img.shields.io/badge/Node-%5E22.19%20%7C%7C%20%3E%3D24-339933?style=flat-square" />
 </p>
 
@@ -430,7 +430,7 @@ dsh-memweave/
 ├── aggregate/           # Optional aggregate package (marker + generated patch)
 ├── scripts/             # prepare-aggregate.mjs
 ├── locale/              # zh/en display metadata
-├── test/                # 35 tests: Host, API, paths, client, aggregate
+├── test/                # 37 tests: Host, API, paths, client, aggregate
 ├── DESIGN.md            # Full design and ADR record
 └── README.md
 ```
@@ -475,7 +475,7 @@ Tests need resolvable `@deepseek-ai/dsh-tools`, `@deepseek-ai/dsh-llm` and `@dee
 
 | Version | Status | Content |
 |---|---|---|
-| **v1.0** | ✅ released | 10 tools, three settings tabs, fusion, aggregate, 35 tests |
+| **v1.0** | ✅ released | 10 tools, three settings tabs, fusion, aggregate, 37 tests |
 | v1.1 | planned | Task-network update tool; `superseded` workflow; vector retrieval with explainable ordering |
 | v1.2 | planned | More fusion adapters; extended export formats; screenshots and demo assets |
 | Future | exploring | Team-shared storage, memory merge suggestions, Loop/task-completion linking |

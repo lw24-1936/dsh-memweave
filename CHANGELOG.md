@@ -9,6 +9,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Added
 - A complete Chinese usage guide with real UI screenshots: `docs/USAGE.md`.
 
+### Fixed
+- Fusion file probes keep the session workspace when `storageRoot` points at a custom directory. Add regression coverage for storage resolution and Fusion detection.
+
 ### Planned
 - Task-network update tool (`memweave_network_update`).
 - `superseded` workflow and merge suggestions.

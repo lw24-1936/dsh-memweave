@@ -50,6 +50,23 @@ test('empty storageRoot falls back to the session workspace', async () => {
   }
 });
 
+test('configured storageRoot keeps the session workspace for fusion probes', async () => {
+  const workspace = await makeWorkspace();
+  const store = await makeWorkspace();
+  try {
+    const resolved = await resolveStorageRoot({
+      settings: { storageRoot: store },
+      exec: { agent: { session: { header: { cwd: workspace } } } },
+    });
+    assert.equal(resolved.source, 'configured');
+    assert.equal(resolved.root, path.normalize(store));
+    assert.equal(resolved.workspace, workspace);
+  } finally {
+    await cleanup(workspace);
+    await cleanup(store);
+  }
+});
+
 test('atomic write leaves no temp files and replaces content', async () => {
   const workspace = await makeWorkspace();
   try {

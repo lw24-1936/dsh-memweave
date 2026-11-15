@@ -419,6 +419,28 @@ test('import downgrades an anti-pattern record that lacks its invalidation notes
   }
 });
 
+test('fusion file probes still use the session workspace with a custom storageRoot', async () => {
+  const workspace = await makeWorkspace();
+  const store = await makeWorkspace();
+  try {
+    await fs.mkdir(path.join(workspace, '.dsh-memory'), { recursive: true });
+    await fs.writeFile(path.join(workspace, '.dsh-memory', 'probe.md'), '---\ntype: fact\n---\n自定义存储根仍应探测 workspace。\n', 'utf8');
+    const { tools } = createHost({ cwd: workspace, config: { storageRoot: store } });
+    const exec = makeExec(workspace);
+    const status = await runTool(tools, 'memweave_fusion_status', {}, exec);
+    const xfy = status.value.plugins.find(plugin => plugin.key === 'dsh-memory-xfy');
+    assert.equal(xfy.available, true);
+    assert.equal(xfy.detectedBy, 'file');
+    const snapshot = await runTool(tools, 'memweave_memory_list', { summary: true }, exec);
+    assert.equal(snapshot.value.total, 0);
+    const list = await fs.readdir(path.join(store, 'memories'));
+    assert.deepEqual(list, []);
+  } finally {
+    await cleanup(workspace);
+    await cleanup(store);
+  }
+});
+
 test('import/export require the matching fusion direction', async () => {
   const workspace = await makeWorkspace();
   try {

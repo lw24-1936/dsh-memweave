@@ -315,6 +315,74 @@ candidate ──verify(valid) +0.15──► verified
 
 `刷新` 会重新探测，不修改配置。
 
+### 4.2.1 如何让插件变为“可用”
+
+“可用”与“启用”是两件事：
+
+- **可用**：探测到了数据或工具；
+- **启用**：你允许织忆在显式调用时按方向读写。
+
+探测优先级：服务 → 已知工具名 → workspace 下的公开文件。当前 5 个适配器主要通过**文件**或**工具名**探测。
+
+#### 方式一：安装并启用兼容插件
+
+1. 用 `plugin_manager` 安装目标插件，例如 `dsh-memory-xfy`。
+2. 确认它已启用，并且它注册的工具在当前 Agent 中可见。
+3. 回到融合页点“刷新”。
+
+如果该插件注册了织忆认识的工具名，会显示“检测方式：工具”；如果它在 workspace 写入了记忆文件，会显示“检测方式：文件”。
+
+#### 方式二：在 workspace 放置兼容记忆文件
+
+这是最快的验证方式，也适用于插件已经产生数据、但织忆尚未识别的情况。
+
+| 插件 | 放到当前 workspace 的路径 | 格式 |
+|---|---|---|
+| `dsh-memory-xfy` | `.dsh-memory/**/*.md` | Markdown |
+| `dsh-memory-plus` | `.dsh-memory/**/*.json` | JSON |
+| `dsh-cue-bank` | `.dsh-cue-bank/**/*.json` | JSON |
+| `dsh-task-memory` | `.dsh-task-memory/**/*.md` | Markdown |
+| `dsh-graphmemory` | `.dsh-graphmemory/**/*.json` | JSON |
+
+示例（xfy）：
+
+```powershell
+$workspace = "E:\path\to\your\workspace"
+New-Item -ItemType Directory -Force "$workspace\.dsh-memory" | Out-Null
+@'
+---
+type: judgment
+---
+在安装前先跑契约测试，能更早发现 schema 错误。
+'@ | Set-Content -Encoding utf8 "$workspace\.dsh-memory\demo.md"
+```
+
+示例（memory-plus）：
+
+```json
+{
+  "memories": [
+    { "type": "fact", "content": "记忆需要先验证再进入默认检索池" }
+  ]
+}
+```
+
+放好后回到融合页点 **刷新**，对应卡片应变成“可用 / 已连接”。
+
+#### 仍然不可用时按顺序检查
+
+1. 文件是否在**当前 workspace**，而不是别的项目目录；
+2. 目录名是否精确匹配（`.dsh-memory`、`.dsh-cue-bank` 等）；
+3. 扩展名是否匹配（`.md` 或 `.json`）；
+4. 文件是否为空或不是有效格式（探测能看到，但导入会跳过）；
+5. 嵌套是否过深，或是否位于 `node_modules`、`.git` 等被跳过的目录；
+6. 插件是否真的启用，工具名是否在当前 Agent 中可见；
+7. 点“刷新”重新探测。
+
+> 聚合包只添加聚合标记，**不会让单个兼容插件变成可用**；可用性仍取决于文件或工具探测。
+>
+> 自定义 `storageRoot` 不会影响融合探测：文件探测始终使用当前会话 workspace。
+
 ### 4.3 启用与方向
 
 ![融合启用](screenshots/usage-fusion-enabled.png)
