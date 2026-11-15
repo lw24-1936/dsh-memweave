@@ -388,6 +388,18 @@ type: judgment
 7. 点“刷新”重新探测。
 
 > 聚合包只添加聚合标记，**不会替目标提供数据**；可用性由内置适配器、安装态、文件或工具探测决定。
+
+#### 已安装的全栈插件
+
+融合页底部还有一个独立区块“已安装的全栈插件”。它读取当前 profile 的安装态，目前会显示类似：
+
+- `DSH Better Sidebar`，版本 `0.32.1`，分类“全栈开发”；
+- 它不是记忆适配器，不会混入上面的五个固定目标；
+- 删除使用插件管理器：`plugin_manager remove_bundle target=dsh-better-sidebar`。
+
+这个区块只做展示，不会自动安装或启用插件。
+
+![已安装的全栈插件](screenshots/usage-fusion-installed.png)
 >
 > 自定义 `storageRoot` 不会影响融合探测：文件探测始终使用当前会话 workspace。
 

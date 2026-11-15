@@ -97,6 +97,11 @@ window.__ModuleLoader__.load({
       fusionTitle: '融合',
       fusionIntro: '只读探测兼容记忆插件；内置适配器、安装或检测到即显示可用。启用只解除显式导入/导出的方向限制，不会自动同步，也不修改其他插件。',
       fusionSummary: '检测到 {count} 个兼容目标，{available} 个可用，{enabled} 个已启用',
+      discoveryTitle: '已安装的全栈插件',
+      discoveryIntro: '来自每日巡检分类与当前 profile 安装态；不是记忆适配器。删除请使用插件管理器。',
+      discoveryEmpty: '暂无已安装的全栈插件。',
+      discoveryInstalled: '已安装',
+      discoveryDeleteHint: '删除：plugin_manager remove_bundle target=',
       detectedBy: '检测方式',
       byFile: '文件',
       byService: '服务',
@@ -198,6 +203,11 @@ window.__ModuleLoader__.load({
       fusionTitle: 'Fusion',
       fusionIntro: 'Read-only probes over compatible memory plugins; built-in adapters, installed packages, or detected data show as available. Enabling only unlocks explicit import/export directions and never auto-syncs or edits another plugin.',
       fusionSummary: '{count} compatibility targets, {available} available, {enabled} enabled',
+      discoveryTitle: 'Installed full-stack plugins',
+      discoveryIntro: 'From the daily discovery category and active-profile install state; these are not memory adapters. Remove them with the plugin manager.',
+      discoveryEmpty: 'No full-stack plugins installed.',
+      discoveryInstalled: 'Installed',
+      discoveryDeleteHint: 'Remove: plugin_manager remove_bundle target=',
       detectedBy: 'Detected by',
       byFile: 'File',
       byService: 'Service',
@@ -387,6 +397,8 @@ window.__ModuleLoader__.load({
       .mw-verify-bar { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--dsw-alias-border-l1); }
       .mw-fusion-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; }
       .mw-fusion-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 3px; }
+      .mw-installed-row { padding: 10px 0; border-top: 1px solid var(--dsw-alias-border-l1); }
+      .mw-installed-row:first-of-type { border-top: 0; padding-top: 0; }
       .mw-select { padding: 5px 7px; border-radius: 7px; border: 1px solid var(--dsw-alias-border-l2); background: var(--dsw-alias-bg-layer-2, transparent); color: inherit; font: inherit; }
       .mw-switch { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
       .mw-check { width: 15px; height: 15px; accent-color: var(--dsw-alias-state-warn-primary); }
@@ -924,6 +936,31 @@ window.__ModuleLoader__.load({
             ]),
           ]),
         ]))),
+
+        fusion === null ? null : h('div', { className: 'mw-card', key: 'installed' }, [
+          h('div', { className: 'mw-between', key: 'head' }, [
+            h('strong', { key: 'title' }, t('discoveryTitle')),
+            h('span', { className: 'mw-badge', key: 'count' }, String((fusion.installed ?? []).length)),
+          ]),
+          h('p', { className: 'mw-muted', key: 'intro' }, t('discoveryIntro')),
+          (fusion.installed ?? []).length === 0
+            ? h('p', { className: 'mw-empty', key: 'empty' }, t('discoveryEmpty'))
+            : h('div', { key: 'list' }, (fusion.installed ?? []).map(item => h('div', {
+              className: 'mw-installed-row',
+              key: item.key,
+            }, [
+              h('div', { className: 'mw-between', key: 'head' }, [
+                h('strong', { key: 'label' }, item.label),
+                h('span', { className: 'mw-badge mw-badge-ok', key: 'version' }, item.version === null ? t('discoveryInstalled') : `v${item.version}`),
+              ]),
+              h('div', { className: 'mw-fusion-meta', key: 'meta' }, [
+                h('span', { className: 'mw-badge', key: 'category' }, item.category),
+                h('span', { className: 'mw-badge mw-badge-ok', key: 'installed' }, t('discoveryInstalled')),
+              ]),
+              h('div', { className: 'mw-muted mw-hint', key: 'description' }, item.description),
+              h('div', { className: 'mw-muted mw-hint', key: 'remove' }, `${t('discoveryDeleteHint')}${item.key}`),
+            ]))),
+        ]),
 
         fusion === null ? null : h('p', { className: 'mw-muted mw-hint', key: 'statement' }, t('compatibilityNote')),
       ]);

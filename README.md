@@ -13,7 +13,7 @@
   <img alt="version" src="https://img.shields.io/badge/version-1.0.0-4f46e5?style=flat-square" />
   <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a?style=flat-square" />
   <img alt="DSH" src="https://img.shields.io/badge/DSH-0.2.x-0ea5e9?style=flat-square" />
-  <img alt="tests" src="https://img.shields.io/badge/tests-40%20passing-brightgreen?style=flat-square" />
+  <img alt="tests" src="https://img.shields.io/badge/tests-42%20passing-brightgreen?style=flat-square" />
   <img alt="node" src="https://img.shields.io/badge/Node-%5E22.19%20%7C%7C%20%3E%3D24-339933?style=flat-square" />
 </p>
 
@@ -444,7 +444,7 @@ dsh-memweave/
 ├── aggregate/           # 可选聚合包（marker + 生成的 patch）
 ├── scripts/             # prepare-aggregate.mjs
 ├── locale/              # zh/en 显示元数据
-├── test/                # 40 个测试：Host、API、paths、client、aggregate
+├── test/                # 42 个测试：Host、API、paths、client、aggregate
 ├── DESIGN.md            # 完整设计文档与 ADR
 └── README.md
 ```
@@ -489,7 +489,7 @@ node scripts/prepare-aggregate.mjs --profile <profile-dir>
 
 | 版本 | 状态 | 内容 |
 |---|---|---|
-| **v1.0** | ✅ 已发布 | 10 个工具、三个设置页、融合层、聚合层、40 个测试 |
+| **v1.0** | ✅ 已发布 | 10 个工具、三个设置页、融合层、聚合层、42 个测试 |
 | v1.1 | 计划 | 任务网络更新工具；`superseded` 工作流；向量检索（保留可解释排序） |
 | v1.2 | 计划 | 更多融合适配器；导出格式扩展；截图与演示素材 |
 | 未来 | 探索 | 团队级共享存储、记忆合并建议、Loop 与任务完成自动关联 |

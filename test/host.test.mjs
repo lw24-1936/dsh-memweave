@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { HarnessError } from '@deepseek-ai/dsh-llm';
-import { detectFusion } from '../lib/fusion.js';
+import { detectFusion, listInstalledDiscoveryPlugins } from '../lib/fusion.js';
 import { cleanup, createHost, makeExec, makeWorkspace, runTool } from './helpers.mjs';
 
 const TOOL_NAMES = [
@@ -430,6 +430,58 @@ test('fusion tool probes use the actual xfy tool names', async () => {
     assert.equal(xfy.detectedBy, 'tool');
   } finally {
     await cleanup(workspace);
+  }
+});
+
+test('installed discovery plugins are read from the active profile', async () => {
+  const home = await makeWorkspace('memweave-home-');
+  const previousHome = process.env.DSH_HOME;
+  const previousProfile = process.env.DSH_PROFILE;
+  try {
+    const profileRoot = path.join(home, 'profiles', 'probe');
+    const pkgRoot = path.join(profileRoot, 'node_modules', 'dsh-better-sidebar');
+    await fs.mkdir(pkgRoot, { recursive: true });
+    await fs.writeFile(path.join(profileRoot, 'package.json'), JSON.stringify({ dependencies: { 'dsh-better-sidebar': '^1.0.0' } }), 'utf8');
+    await fs.writeFile(path.join(pkgRoot, 'package.json'), JSON.stringify({ name: 'dsh-better-sidebar', version: '1.0.0' }), 'utf8');
+    process.env.DSH_HOME = home;
+    process.env.DSH_PROFILE = 'probe';
+    const installed = await listInstalledDiscoveryPlugins();
+    assert.equal(installed.length, 1);
+    assert.equal(installed[0].key, 'dsh-better-sidebar');
+    assert.equal(installed[0].version, '1.0.0');
+    assert.equal(installed[0].category, '全栈开发');
+  } finally {
+    if (previousHome === undefined) delete process.env.DSH_HOME;
+    else process.env.DSH_HOME = previousHome;
+    if (previousProfile === undefined) delete process.env.DSH_PROFILE;
+    else process.env.DSH_PROFILE = previousProfile;
+    await cleanup(home);
+  }
+});
+
+test('discovery resolves the active profile without DSH_PROFILE', async () => {
+  const home = await makeWorkspace('memweave-home-');
+  const previousHome = process.env.DSH_HOME;
+  const previousProfile = process.env.DSH_PROFILE;
+  try {
+    const profileRoot = path.join(home, 'profiles', 'probe');
+    const pkgRoot = path.join(profileRoot, 'node_modules', 'dsh-better-sidebar');
+    await fs.mkdir(pkgRoot, { recursive: true });
+    await fs.writeFile(path.join(profileRoot, 'package.json'), JSON.stringify({
+      dependencies: { 'dsh-memweave': 'link:../dsh-memweave', 'dsh-better-sidebar': '^1.0.0' },
+    }), 'utf8');
+    await fs.writeFile(path.join(pkgRoot, 'package.json'), JSON.stringify({ name: 'dsh-better-sidebar', version: '1.0.0' }), 'utf8');
+    process.env.DSH_HOME = home;
+    delete process.env.DSH_PROFILE;
+    const installed = await listInstalledDiscoveryPlugins();
+    assert.equal(installed.length, 1);
+    assert.equal(installed[0].key, 'dsh-better-sidebar');
+  } finally {
+    if (previousHome === undefined) delete process.env.DSH_HOME;
+    else process.env.DSH_HOME = previousHome;
+    if (previousProfile === undefined) delete process.env.DSH_PROFILE;
+    else process.env.DSH_PROFILE = previousProfile;
+    await cleanup(home);
   }
 });
 

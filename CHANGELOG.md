@@ -9,6 +9,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Added
 - A complete Chinese usage guide with real UI screenshots: `docs/USAGE.md`.
 - Daily plugin marketplace discovery with optional categories; the default category is full-stack development. Memory fusion adapters remain fixed and are not market-probed.
+- The Fusion tab shows installed full-stack plugins from the active profile in a separate read-only section.
 
 ### Fixed
 - Fusion file probes keep the session workspace when `storageRoot` points at a custom directory. Add regression coverage for storage resolution and Fusion detection.
