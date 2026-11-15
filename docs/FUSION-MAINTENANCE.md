@@ -53,10 +53,12 @@
 
 | key | 探测面 | 备注 |
 |---|---|---|
-| `dsh-memory-xfy` | 工具 `mem_search` / `mem_pack`；已安装 | 原生数据在 `~/.dsh`，文件桥接暂未映射 |
-| `dsh-memory-plus` | 文件 `.dsh-memory/**/*.json` | 真实包可能使用不同存储，需按版本确认 |
-| `dsh-cue-bank` | 文件 `.dsh-cue-bank/**/*.json` | 需确认实际目录 |
-| `dsh-task-memory` | 工具 `memory_*`；文件 `.dsh-task-memory/**/*.md` | 原生数据在 `~/.dsh/storages/task-memory/` |
-| `dsh-graphmemory` | 文件 `.dsh-graphmemory/**/*.json` | 需确认实际目录 |
+| `dsh-memory-xfy` | 工具 `mem_search` / `mem_pack`；安装态 | 原生数据在 `~/.dsh`，文件桥接暂未映射 |
+| `dsh-memory-plus` | 文件 `.dsh-memory/**/*.json`；**内置适配器** | 无外部插件也可用；数据仍需匹配文件 |
+| `dsh-cue-bank` | 文件 `.dsh-cue-bank/**/*.json`；**内置适配器** | 无外部插件也可用；数据仍需匹配文件 |
+| `dsh-task-memory` | 工具 `memory_*`；文件 `.dsh-task-memory/**/*.md`；**内置适配器** | 原生数据在 `~/.dsh/storages/task-memory/` |
+| `dsh-graphmemory` | 文件 `.dsh-graphmemory/**/*.json`；**内置适配器** | 无外部插件也可用；数据仍需匹配文件 |
+
+> 内置适配器让兼容目标在没有外部插件时也保持“可用”，用于显式导入/导出；它不等于外部插件已经安装，也不代表一定存在可导入的数据。
 
 > 这张表是适配现状，不是“功能承诺”。探测到 ≠ 一定能导入原生数据；导入能力以实际文件桥接为准。

@@ -13,7 +13,7 @@
   <img alt="version" src="https://img.shields.io/badge/version-1.0.0-4f46e5?style=flat-square" />
   <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a?style=flat-square" />
   <img alt="DSH" src="https://img.shields.io/badge/DSH-0.2.x-0ea5e9?style=flat-square" />
-  <img alt="tests" src="https://img.shields.io/badge/tests-39%20passing-brightgreen?style=flat-square" />
+  <img alt="tests" src="https://img.shields.io/badge/tests-40%20passing-brightgreen?style=flat-square" />
   <img alt="node" src="https://img.shields.io/badge/Node-%5E22.19%20%7C%7C%20%3E%3D24-339933?style=flat-square" />
 </p>
 
@@ -88,7 +88,7 @@
 | 📈 | **可衡量 Loop** | 没有指标、目标、单位、节奏，就不能创建循环 |
 | 🕸️ | **任务网络** | 目标拆成带依赖的任务节点，并自动注入相关反模式警告 |
 | 🖥️ | **三个设置标签页** | 存储与分类、技能浏览、融合，全部读写同一份 Host 数据 |
-| 🔌 | **只读融合层** | 兼容其他记忆插件，但不修改、不劫持、不自动同步 |
+| 🔌 | **只读融合层** | 兼容其他记忆插件；四个文件目标自带内置适配器，不改配置、不劫持工具、不自动同步 |
 | 🔒 | **本地原子存储** | 独占临时文件 + `rename`；单文件写入原子 |
 | 📦 | **零第三方运行时依赖** | Host 只依赖 DSH SDK 与 Node 内置模块；Client 只用宿主 React |
 
@@ -443,7 +443,7 @@ dsh-memweave/
 ├── aggregate/           # 可选聚合包（marker + 生成的 patch）
 ├── scripts/             # prepare-aggregate.mjs
 ├── locale/              # zh/en 显示元数据
-├── test/                # 39 个测试：Host、API、paths、client、aggregate
+├── test/                # 40 个测试：Host、API、paths、client、aggregate
 ├── DESIGN.md            # 完整设计文档与 ADR
 └── README.md
 ```
@@ -477,7 +477,7 @@ node scripts/prepare-aggregate.mjs --profile <profile-dir>
 | 模型看不到 `memweave_*` 工具 | 插件 fiber 未激活 | 查看插件清单状态；禁用再启用一次 |
 | 保存存储路径后报读取失败 | Config 变更触发重启的竞态 | 等 1 秒点“重试”；UI 已自动重试一次 |
 | 提示 `storageRoot 必须是绝对路径` | 填了相对路径 | 改为绝对路径，或清空使用 `.memweave/` |
-| 融合标签页显示“不可用” | workspace 下没有对应文件/工具 | 确认目录与格式；文件探测只读公开区域 |
+| 融合标签页显示“不可用” | 目标不是内置适配器，且没有对应文件/工具/安装态 | 确认目录与格式；文件探测只读公开区域 |
 | 聚合安装后没有 marker | 先装了聚合、未装独立版 | 先安装 `dsh-memweave`，再安装 `aggregate/` |
 | 导入 0 条、跳过 N 条 | 内容重复或文件不可读 | 先 `dryRun` 看示例；检查文件编码与格式 |
 
@@ -488,7 +488,7 @@ node scripts/prepare-aggregate.mjs --profile <profile-dir>
 
 | 版本 | 状态 | 内容 |
 |---|---|---|
-| **v1.0** | ✅ 已发布 | 10 个工具、三个设置页、融合层、聚合层、39 个测试 |
+| **v1.0** | ✅ 已发布 | 10 个工具、三个设置页、融合层、聚合层、40 个测试 |
 | v1.1 | 计划 | 任务网络更新工具；`superseded` 工作流；向量检索（保留可解释排序） |
 | v1.2 | 计划 | 更多融合适配器；导出格式扩展；截图与演示素材 |
 | 未来 | 探索 | 团队级共享存储、记忆合并建议、Loop 与任务完成自动关联 |
