@@ -94,7 +94,7 @@ Two cross-cutting rules:
 <a id="screenshots"></a>
 ## Screenshots
 
-Captured from the real DSH 0.2.x Web UI. The sample data is for demonstration only; the UI is localized to Chinese in these captures.
+Captured from the real DSH 0.2.x Web UI. `Plugin list` is the settings shell's built-in tab; Memweave contributes the other three. The sample data is for demonstration only; the UI is localized to Chinese in these captures.
 
 <details open>
 <summary><b>Storage & categories</b>: absolute root, five category counts and status distribution</summary>
@@ -111,7 +111,7 @@ Captured from the real DSH 0.2.x Web UI. The sample data is for demonstration on
 </details>
 
 <details>
-<summary><b>Fusion</b>: read-only probes for five known compatible plugins, with direction controls</summary>
+<summary><b>Fusion</b>: read-only probes for five known compatible plugins, with direction controls (top three shown; scroll for all five)</summary>
 
 ![Fusion](docs/screenshots/fusion.png)
 

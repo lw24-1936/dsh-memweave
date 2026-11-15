@@ -94,7 +94,7 @@
 <a id="screenshots"></a>
 ## 界面预览
 
-以下截图来自真实运行的 DSH 0.2.x Web UI，示例数据仅用于演示。
+以下截图来自真实运行的 DSH 0.2.x Web UI；`插件列表` 是设置外壳自带的标签页，织忆贡献其余三个。示例数据仅用于演示。
 
 <details open>
 <summary><b>存储与分类</b>：绝对路径、五类计数与状态分布</summary>
@@ -111,7 +111,7 @@
 </details>
 
 <details>
-<summary><b>融合</b>：5 个已知兼容插件的只读探测与方向开关</summary>
+<summary><b>融合</b>：5 个已知兼容插件的只读探测与方向开关（截图为前 3 项，向下滚动可查看全部 5 项）</summary>
 
 ![融合](docs/screenshots/fusion.png)
 
