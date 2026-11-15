@@ -5,6 +5,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { HarnessError } from '@deepseek-ai/dsh-llm';
+import { detectFusion } from '../lib/fusion.js';
 import { cleanup, createHost, makeExec, makeWorkspace, runTool } from './helpers.mjs';
 
 const TOOL_NAMES = [
@@ -414,6 +415,19 @@ test('import downgrades an anti-pattern record that lacks its invalidation notes
     assert.equal(stored.type, 'fact');
     assert.equal(stored.confidence, 0.4);
     assert.equal(stored.status, 'candidate');
+  } finally {
+    await cleanup(workspace);
+  }
+});
+
+test('fusion tool probes use the actual xfy tool names', async () => {
+  const workspace = await makeWorkspace();
+  try {
+    const ctx = { tools: { schemas: () => [{ name: 'mem_search' }, { name: 'mem_pack' }] } };
+    const status = await detectFusion({ ctx, workspace, settings: {} });
+    const xfy = status.plugins.find(plugin => plugin.key === 'dsh-memory-xfy');
+    assert.equal(xfy.available, true);
+    assert.equal(xfy.detectedBy, 'tool');
   } finally {
     await cleanup(workspace);
   }
