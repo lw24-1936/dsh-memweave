@@ -38,9 +38,10 @@ window.__ModuleLoader__.load({
       sourceHost: 'Host 启动目录',
       sourceInvalid: '配置无效',
       memoryCount: '记忆总数',
-      pathLabel: '存储根目录（绝对路径；留空使用 workspace/.memweave）',
+      pathLabel: '存储根目录',
+      optional: '可选',
       pathPlaceholder: '例如 D:\\memory\\memweave',
-      pathHint: '相对路径会被 Host 拒绝。清除后回退到当前 workspace 的 .memweave/。',
+      pathHint: '推荐留空：每个 workspace 独立使用 .memweave/。只有需要跨 workspace 共享或集中备份时，才填写可写的绝对路径；清除后回退到当前 workspace。',
       save: '保存',
       saving: '保存中…',
       clear: '清除',
@@ -136,9 +137,10 @@ window.__ModuleLoader__.load({
       sourceHost: 'Host launch directory',
       sourceInvalid: 'Invalid configuration',
       memoryCount: 'Total memories',
-      pathLabel: 'Storage root (absolute path; leave empty for workspace/.memweave)',
+      pathLabel: 'Storage root',
+      optional: 'Optional',
       pathPlaceholder: 'e.g. D:\\memory\\memweave',
-      pathHint: 'The Host rejects relative paths. Clearing falls back to the current workspace .memweave/.',
+      pathHint: 'Recommended: leave empty so each workspace keeps its own .memweave/. Set a writable absolute path only for cross-workspace sharing or central backup; clearing falls back to the current workspace.',
       save: 'Save',
       saving: 'Saving…',
       clear: 'Clear',
@@ -355,7 +357,8 @@ window.__ModuleLoader__.load({
       .mw-button { cursor: pointer; padding: 6px 11px; border-radius: 8px; border: 1px solid var(--dsw-alias-border-l2); background: transparent; color: inherit; font: inherit; }
       .mw-button:hover { background: var(--dsw-alias-interactive-bg-hover); }
       .mw-button:disabled { opacity: .55; cursor: default; }
-      .mw-button-primary { background: var(--dsw-alias-button-primary-fill); border-color: transparent; color: var(--dsw-alias-bg-base); }
+      .mw-button-primary { background: var(--dsw-static-neutral-bluish-00, #fff); border-color: var(--dsw-alias-border-l2); color: var(--dsw-static-neutral-bluish-1000, #111); }
+      .mw-button-primary:hover { background: var(--dsw-static-neutral-bluish-50, #f5f5f5); }
       .mw-button-danger { color: var(--dsw-alias-state-error-primary); border-color: var(--dsw-alias-border-l2); }
       .mw-badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--dsw-alias-border-l2); font-size: 11px; color: var(--dsw-alias-label-secondary); }
       .mw-badge-warn { color: var(--dsw-alias-state-warn-primary); border-color: var(--dsw-alias-state-warn-primary); }
@@ -521,7 +524,10 @@ window.__ModuleLoader__.load({
         ]) : null,
 
         h('div', { className: 'mw-card', key: 'editor' }, [
-          h('label', { className: 'mw-muted', key: 'label', htmlFor: 'mw-storage-path' }, t('pathLabel')),
+          h('div', { className: 'mw-row', key: 'label', style: { gap: 6 } }, [
+            h('label', { className: 'mw-muted', htmlFor: 'mw-storage-path' }, t('pathLabel')),
+            h('span', { className: 'mw-badge', key: 'optional' }, t('optional')),
+          ]),
           h('div', { className: 'mw-row', key: 'row', style: { marginTop: 5 } }, [
             h('input', {
               id: 'mw-storage-path',
