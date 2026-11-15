@@ -448,6 +448,7 @@ test('built-in adapters are available without an external plugin', async () => {
     const plus = status.plugins.find(plugin => plugin.key === 'dsh-memory-plus');
     assert.equal(plus.detectedBy, 'builtin');
     assert.match(plus.detail, /内置适配器/);
+    assert.equal(plus.detail.includes('未找到'), false);
   } finally {
     if (previousHome === undefined) delete process.env.DSH_HOME;
     else process.env.DSH_HOME = previousHome;
