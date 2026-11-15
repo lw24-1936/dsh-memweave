@@ -378,7 +378,7 @@ open(tmp, 'wx', 0o600) → write → close → rename(tmp, target)
 
 ### 兼容矩阵
 
-| 插件 | 检测方式 | 文件/格式 | 默认方向 |
+| 插件 | 来源 | 文件/格式 | 默认方向 |
 |---|---|---|---|
 | `dsh-memory-xfy` | 内置 | `.dsh-memory/**/*.md` | 读 |
 | `dsh-memory-plus` | 内置 | `.dsh-memory/**/*.json` | 读 |

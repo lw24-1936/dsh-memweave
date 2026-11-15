@@ -366,7 +366,7 @@ Memweave never imports another plugin's runtime values, edits another plugin's c
 
 ### Compatibility matrix
 
-| Plugin | Detection | File / format | Default direction |
+| Plugin | Source | File / format | Default direction |
 |---|---|---|---|
 | `dsh-memory-xfy` | built-in | `.dsh-memory/**/*.md` | read |
 | `dsh-memory-plus` | built-in | `.dsh-memory/**/*.json` | read |

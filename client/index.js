@@ -96,12 +96,11 @@ window.__ModuleLoader__.load({
       statusSuperseded: '已取代',
       fusionTitle: '融合',
       fusionIntro: '5 个固定内置记忆适配器；启用与方向只控制显式导入/导出，不自动检测插件，也不同步或修改其他插件。',
-      fusionSummary: '检测到 {count} 个记忆适配器，{available} 个可用，{enabled} 个已启用',
-      detectedBy: '检测方式',
+      fusionSummary: '{count} 个固定内置记忆适配器，{enabled} 个已启用',
+      detectedBy: '来源',
       byBuiltin: '内置',
+      fixed: '固定',
       saved: '已保存',
-      available: '可用',
-      unavailable: '不可用',
       enable: '启用',
       direction: '方向',
       directionRead: '读取',
@@ -192,12 +191,11 @@ window.__ModuleLoader__.load({
       statusSuperseded: 'Superseded',
       fusionTitle: 'Fusion',
       fusionIntro: 'Five fixed built-in memory adapters. Enable/direction only control explicit import/export; Memweave does not auto-detect plugins, sync automatically, or edit another plugin.',
-      fusionSummary: '{count} memory adapters, {available} available, {enabled} enabled',
-      detectedBy: 'Detected by',
+      fusionSummary: '{count} fixed built-in memory adapters, {enabled} enabled',
+      detectedBy: 'Source',
       byBuiltin: 'Built-in',
+      fixed: 'Fixed',
       saved: 'Saved',
-      available: 'Available',
-      unavailable: 'Unavailable',
       enable: 'Enable',
       direction: 'Direction',
       directionRead: 'Read',
@@ -849,7 +847,6 @@ window.__ModuleLoader__.load({
 
       const fusion = state.status === 'ready' ? state.fusion : null;
       const enabledCount = fusion === null ? 0 : fusion.plugins.filter(plugin => plugin.enabled).length;
-      const availableCount = fusion === null ? 0 : fusion.plugins.filter(plugin => plugin.available).length;
       const directionOptions = [
         ['read', t('directionRead')],
         ['write', t('directionWrite')],
@@ -872,7 +869,7 @@ window.__ModuleLoader__.load({
 
         fusion === null ? null : h('div', { className: 'mw-card', key: 'summary' }, [
           h('div', { className: 'mw-between', key: 'head' }, [
-            h('strong', { key: 'summary' }, t('fusionSummary', { count: fusion.plugins.length, available: availableCount, enabled: enabledCount })),
+            h('strong', { key: 'summary' }, t('fusionSummary', { count: fusion.plugins.length, enabled: enabledCount })),
             h('span', { className: `mw-badge${fusion.aggregateBundle ? ' mw-badge-ok' : ''}`, key: 'aggregate' }, fusion.aggregateBundle ? t('aggregateOn') : t('aggregateOff')),
           ]),
           h('button', { className: 'mw-button', type: 'button', style: { marginTop: 8 }, onClick: load }, t('refresh')),
@@ -887,7 +884,7 @@ window.__ModuleLoader__.load({
               h('strong', { key: 'label' }, plugin.label),
               h('div', { className: 'mw-fusion-meta', key: 'meta' }, [
                 h('span', { className: 'mw-badge', key: 'by' }, `${t('detectedBy')}：${detectionLabels[plugin.detectedBy] ?? plugin.detectedBy}`),
-                h('span', { className: `mw-badge${plugin.available ? ' mw-badge-ok' : ' mw-badge-warn'}`, key: 'avail' }, plugin.available ? t('available') : t('unavailable')),
+                h('span', { className: 'mw-badge', key: 'fixed' }, t('fixed')),
                 h('span', { className: 'mw-badge', key: 'dir' }, `${t('direction')}：${plugin.direction}`),
               ]),
               h('div', { className: 'mw-muted mw-hint', key: 'detail' }, plugin.detail),
@@ -899,7 +896,7 @@ window.__ModuleLoader__.load({
                   key: 'check',
                   type: 'checkbox',
                   checked: plugin.enabled,
-                  disabled: busyKey === plugin.key || (!plugin.available && !plugin.enabled),
+                  disabled: busyKey === plugin.key,
                   onChange: event => { update(plugin, { enabled: event.currentTarget.checked }); },
                 }),
                 t('enable'),
@@ -908,7 +905,7 @@ window.__ModuleLoader__.load({
                 key: 'select',
                 className: 'mw-select',
                 value: plugin.direction,
-                disabled: busyKey === plugin.key || !plugin.available,
+                disabled: busyKey === plugin.key,
                 onChange: event => { update(plugin, { direction: event.currentTarget.value }); },
               }, directionOptions.map(([value, label]) => h('option', { key: value, value }, label))),
             ]),
