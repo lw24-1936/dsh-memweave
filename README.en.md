@@ -88,7 +88,7 @@ Two cross-cutting rules:
 | 📈 | **Measurable Loops** | No metric, target, unit and cadence means no Loop |
 | 🕸️ | **Task networks** | Goals become dependency-aware task nodes with anti-pattern warnings |
 | 🖥️ | **Three settings tabs** | Storage & categories, memories, fusion — one Host data source |
-| 🔌 | **Read-only fusion** | Works with other memory plugins; four file targets ship built-in adapters, without editing config, hijacking tools, or auto-syncing |
+| 🔌 | **Read-only fusion** | Works with other memory plugins; all five targets ship built-in adapters, without editing config, hijacking tools, or auto-syncing |
 | 🔒 | **Atomic local storage** | Exclusive temp file + `rename`; single-file writes are atomic |
 | 📦 | **No third-party runtime deps** | Host uses DSH SDK + Node built-ins; Client uses host React only |
 
@@ -354,17 +354,18 @@ Memweave never imports another plugin's runtime values, edits another plugin's c
 
 1. optional `ctx.get(serviceName)` probes;
 2. tool-name probes;
-3. read-only scans of public memory files under the workspace.
+3. read-only scans of public memory files under the workspace;
+4. active-profile install state and built-in adapters.
 
 ### Compatibility matrix
 
 | Plugin | Detection | File / format | Default direction |
 |---|---|---|---|
-| `dsh-memory-xfy` | file / tool | `.dsh-memory/**/*.md` | read |
-| `dsh-memory-plus` | file | `.dsh-memory/**/*.json` | read |
-| `dsh-cue-bank` | file | `.dsh-cue-bank/**/*.json` | read |
-| `dsh-task-memory` | file / tool | `.dsh-task-memory/**/*.md` | read |
-| `dsh-graphmemory` | file | `.dsh-graphmemory/**/*.json` | read |
+| `dsh-memory-xfy` | file (built-in) | `.dsh-memory/**/*.md` | read |
+| `dsh-memory-plus` | file (built-in) | `.dsh-memory/**/*.json` | read |
+| `dsh-cue-bank` | file (built-in) | `.dsh-cue-bank/**/*.json` | read |
+| `dsh-task-memory` | file (built-in; external tool optional) | `.dsh-task-memory/**/*.md` | read |
+| `dsh-graphmemory` | file (built-in) | `.dsh-graphmemory/**/*.json` | read |
 
 ### Explicit import / export
 

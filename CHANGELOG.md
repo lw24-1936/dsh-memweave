@@ -14,6 +14,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Fusion tool probes now recognize the real `mem_search` / `mem_pack` tools of `dsh-memory-xfy`, and the unique `memory_*` tools of `dsh-task-memory`.
 - Fusion reports a compatible package installed in the active profile as available even before data/tools are found; the summary shows available and enabled counts, and uninstalled targets cannot be newly enabled.
 - File-bridge compatibility targets ship built-in adapters, so all five targets remain usable without an external package; data is still only imported when matching files exist.
+- Fusion targets are now presented as built-in adapters. The external `dsh-memory-xfy` demo bundle was removed so its broken sidebar panel no longer loads; the built-in xfy adapter remains available.
 
 ### Planned
 - Task-network update tool (`memweave_network_update`).

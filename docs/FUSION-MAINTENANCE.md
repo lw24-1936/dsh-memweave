@@ -53,7 +53,7 @@
 
 | key | 探测面 | 备注 |
 |---|---|---|
-| `dsh-memory-xfy` | 工具 `mem_search` / `mem_pack`；安装态 | 原生数据在 `~/.dsh`，文件桥接暂未映射 |
+| `dsh-memory-xfy` | 文件 `.dsh-memory/**/*.md`；**内置适配器** | 无外部插件也可用；原生数据在 `~/.dsh`，文件桥接暂未映射 |
 | `dsh-memory-plus` | 文件 `.dsh-memory/**/*.json`；**内置适配器** | 无外部插件也可用；数据仍需匹配文件 |
 | `dsh-cue-bank` | 文件 `.dsh-cue-bank/**/*.json`；**内置适配器** | 无外部插件也可用；数据仍需匹配文件 |
 | `dsh-task-memory` | 工具 `memory_*`；文件 `.dsh-task-memory/**/*.md`；**内置适配器** | 原生数据在 `~/.dsh/storages/task-memory/` |

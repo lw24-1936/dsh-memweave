@@ -88,7 +88,7 @@
 | 📈 | **可衡量 Loop** | 没有指标、目标、单位、节奏，就不能创建循环 |
 | 🕸️ | **任务网络** | 目标拆成带依赖的任务节点，并自动注入相关反模式警告 |
 | 🖥️ | **三个设置标签页** | 存储与分类、技能浏览、融合，全部读写同一份 Host 数据 |
-| 🔌 | **只读融合层** | 兼容其他记忆插件；四个文件目标自带内置适配器，不改配置、不劫持工具、不自动同步 |
+| 🔌 | **只读融合层** | 兼容其他记忆插件；五个目标都带内置适配器，不改配置、不劫持工具、不自动同步 |
 | 🔒 | **本地原子存储** | 独占临时文件 + `rename`；单文件写入原子 |
 | 📦 | **零第三方运行时依赖** | Host 只依赖 DSH SDK 与 Node 内置模块；Client 只用宿主 React |
 
@@ -362,21 +362,22 @@ open(tmp, 'wx', 0o600) → write → close → rename(tmp, target)
 <a id="fusion"></a>
 ## 融合
 
-织忆不 import 其他插件的运行时值，不修改其他插件的配置，不劫持其他插件的工具。融合只通过三种公开机制发生：
+织忆不 import 其他插件的运行时值，不修改其他插件的配置，不劫持其他插件的工具。融合只通过以下公开机制发生：
 
 1. `ctx.get(serviceName)` 可选服务探测；
 2. 工具名探测；
-3. workspace 下公开记忆文件的只读扫描。
+3. workspace 下公开记忆文件的只读扫描；
+4. 当前 profile 的安装态与内置适配器。
 
 ### 兼容矩阵
 
 | 插件 | 检测方式 | 文件/格式 | 默认方向 |
 |---|---|---|---|
-| `dsh-memory-xfy` | 文件 / 工具 | `.dsh-memory/**/*.md` | 读 |
-| `dsh-memory-plus` | 文件 | `.dsh-memory/**/*.json` | 读 |
-| `dsh-cue-bank` | 文件 | `.dsh-cue-bank/**/*.json` | 读 |
-| `dsh-task-memory` | 文件 / 工具 | `.dsh-task-memory/**/*.md` | 读 |
-| `dsh-graphmemory` | 文件 | `.dsh-graphmemory/**/*.json` | 读 |
+| `dsh-memory-xfy` | 文件（内置） | `.dsh-memory/**/*.md` | 读 |
+| `dsh-memory-plus` | 文件（内置） | `.dsh-memory/**/*.json` | 读 |
+| `dsh-cue-bank` | 文件（内置） | `.dsh-cue-bank/**/*.json` | 读 |
+| `dsh-task-memory` | 文件（内置；外部工具可选） | `.dsh-task-memory/**/*.md` | 读 |
+| `dsh-graphmemory` | 文件（内置） | `.dsh-graphmemory/**/*.json` | 读 |
 
 ### 显式导入 / 导出
 

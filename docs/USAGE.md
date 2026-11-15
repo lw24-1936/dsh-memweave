@@ -305,7 +305,7 @@ candidate ──verify(valid) +0.15──► verified
 
 | 字段 | 说明 |
 |---|---|
-| 插件名 | 如 `dsh-memory-xfy 分层记忆` |
+| 插件名 | 如 `内置适配器 · xfy` |
 | 检测方式 | 文件 / 服务 / 工具 |
 | 可用状态 | 可用（绿色）/ 不可用（黄色）；内置适配器也显示“可用” |
 | 方向 | 读取 / 写入 / 双向 |
@@ -324,9 +324,11 @@ candidate ──verify(valid) +0.15──► verified
 
 探测优先级：服务 → 已知工具名 → workspace 下的公开文件 → **已安装的包** → **内置适配器**。兼容包已经安装在当前 profile，或该目标带有内置适配器时，即使还没有产生数据，也会显示为可用；你仍需通过“启用”决定是否允许导入/导出。
 
-其中四个文件桥接目标（`dsh-memory-plus`、`dsh-cue-bank`、`dsh-task-memory`、`dsh-graphmemory`）**自带内置适配器**：没有安装外部插件时显示“检测方式：内置”，不会变红。内置适配器只代表格式桥接代码已就绪，**不代替外部插件的数据**；导入仍需要 workspace 中存在匹配文件。
+其中四个文件桥接目标（`dsh-memory-plus`、`dsh-cue-bank`、`dsh-task-memory`、`dsh-graphmemory`）**自带内置适配器**：没有安装外部插件时显示“检测方式：内置”，不会变红。`dsh-memory-xfy` 也保留内置文件适配器作为兜底。内置适配器只代表格式桥接代码已就绪，**不代替外部插件的数据**；导入仍需要 workspace 中存在匹配文件。
 
-#### 方式一：安装并启用兼容插件
+因此，默认情况下**不需要安装任何外部插件**，五个目标都会显示可用；你只需要决定是否启用。只有在需要某插件的原生引擎/数据时，才安装真实插件。
+
+#### 方式一：安装并启用真实插件（可选）
 
 1. 用 `plugin_manager` 安装目标插件，例如 `dsh-memory-xfy`。
 2. 确认它已启用，并且它注册的工具在当前 Agent 中可见。
@@ -334,7 +336,7 @@ candidate ──verify(valid) +0.15──► verified
 
 如果该插件注册了织忆认识的工具名，会显示“检测方式：工具”；如果它在 workspace 写入了记忆文件，会显示“检测方式：文件”。
 
-例如 `dsh-memory-xfy` 注册的是 `mem_search` / `mem_pack`。安装它之后，融合页会显示“检测方式：工具 / 可用”。注意：这表示工具探测成功，不等于它的原生存储文件已经被映射；`dsh-memory-xfy` 的实际数据默认在 `~/.dsh` 下，而织忆的文件桥接目前读取 workspace 的 `.dsh-memory/**/*.md`。要导入其原生数据，需要进一步适配它的存储布局。
+例如安装真实的 `dsh-memory-xfy` 后，融合页会显示“检测方式：工具”。注意：这表示工具探测成功，不等于它的原生存储文件已经被映射；`dsh-memory-xfy` 的实际数据默认在 `~/.dsh` 下，而织忆的文件桥接读取 workspace 的 `.dsh-memory/**/*.md`。要导入其原生数据，需要进一步适配它的存储布局。没有安装真实插件时，内置适配器仍然可用。
 
 不要同时安装多个 memory 类插件：它们都可能注册 `memory_search` 等工具名，容易冲突。一次只装一个、验证通过后再考虑下一个。
 
@@ -414,7 +416,7 @@ type: judgment
 
 | 插件 | 检测方式 | 读取格式 | 导出格式 | 默认方向 |
 |---|---|---|---|---|
-| `dsh-memory-xfy` | 文件 / 工具 | `.dsh-memory/**/*.md` | Markdown | 读取 |
+| `dsh-memory-xfy` | 文件（内置） | `.dsh-memory/**/*.md` | Markdown | 读取 |
 | `dsh-memory-plus` | 文件 | `.dsh-memory/**/*.json` | JSON | 读取 |
 | `dsh-cue-bank` | 文件 | `.dsh-cue-bank/**/*.json` | JSON | 读取 |
 | `dsh-task-memory` | 文件 / 工具 | `.dsh-task-memory/**/*.md` | Markdown | 读取 |
