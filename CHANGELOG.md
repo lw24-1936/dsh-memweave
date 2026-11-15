@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 - A complete Chinese usage guide with real UI screenshots: `docs/USAGE.md`.
+- Daily plugin marketplace discovery with optional categories; the default category is full-stack development. Memory fusion adapters remain fixed and are not market-probed.
 
 ### Fixed
 - Fusion file probes keep the session workspace when `storageRoot` points at a custom directory. Add regression coverage for storage resolution and Fusion detection.
@@ -15,12 +16,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Fusion reports a compatible package installed in the active profile as available even before data/tools are found; the summary shows available and enabled counts, and uninstalled targets cannot be newly enabled.
 - File-bridge compatibility targets ship built-in adapters, so all five targets remain usable without an external package; data is still only imported when matching files exist.
 - Fusion targets are now presented as built-in adapters. The external `dsh-memory-xfy` demo bundle was removed so its broken sidebar panel no longer loads; the built-in xfy adapter remains available.
+- Adapter cards no longer print missing `.dsh-memory/**` path diagnostics.
 
 ### Planned
 - Task-network update tool (`memweave_network_update`).
 - `superseded` workflow and merge suggestions.
 - Vector retrieval with explainable ordering.
-- More fusion adapters and export formats.
+- More discovery categories and marketplace reports.
 
 ## [1.0.0] - 2026-11-15
 

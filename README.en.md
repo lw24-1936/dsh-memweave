@@ -50,7 +50,7 @@
 - [Roadmap](#roadmap)
 - [Design](#design)
 - [User guide (中文)](./docs/USAGE.md)
-- [Fusion maintenance](./docs/FUSION-MAINTENANCE.md)
+- [Marketplace discovery](./docs/MARKET-DISCOVERY.md)
 - [Contributing](#contributing)
 - [License](#license)
 

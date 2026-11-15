@@ -50,7 +50,7 @@
 - [路线图](#roadmap)
 - [设计文档](#design)
 - [使用指南](./docs/USAGE.md)
-- [融合适配巡检](./docs/FUSION-MAINTENANCE.md)
+- [插件市场巡检](./docs/MARKET-DISCOVERY.md)
 - [贡献](#contributing)
 - [License](#license)
 

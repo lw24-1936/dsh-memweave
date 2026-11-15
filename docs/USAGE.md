@@ -467,7 +467,7 @@ memweave_export(pluginKey="dsh-memory-xfy", statusFilter="verified", limit=50)
 
 聚合只负责组合兼容行，不改变融合读写行为。安装方法见 [README 的可选聚合层](../README.md#aggregate)。
 
-周期性巡检与新增适配的流程见 [融合适配巡检](./FUSION-MAINTENANCE.md)。
+每日插件市场巡检默认探测“全栈开发”分类，分类可按需调整；它与融合适配器无关，五个内置适配器固定不变。流程见 [插件市场巡检](./MARKET-DISCOVERY.md)。
 
 ---
 
