@@ -420,11 +420,11 @@ else                                      → stable
 
 ### 9.6 自动学习
 
-- 默认关闭，显式开启；只监听 `session/event` 的 `user/message`，不处理 assistant 或工具输出。
-- 历史回填通过 `sessionQuery.listSessions()` / `readSession()`，单次有界（默认 50，最多 500）。
-- 提取器只保留含明确决定/纠正信号的句子；写入 `judgment`/`procedure`，带 `session:<id>` 来源。
-- 脱敏规则覆盖私钥、常见 API key、Bearer token、password/token/secret 键值。
-- 明确强语气决定在实时会话可自动 `verified`；历史回填统一写 `candidate`。
+- 默认关闭，显式开启；监听 `session/event` 的所有非流式事件，写入脱敏后的 `sessions/<id>.jsonl` 归档。
+- 历史回填通过 `sessionQuery.listSessions()` / `readSession()`，归档事件并为每个会话生成一条摘要；单次有界（默认 50，最多 500）。
+- 用户消息提取器只保留含长期决定/纠正信号的句子；写入 `judgment`/`procedure`，带 `session:<id>` 来源。
+- 脱敏规则覆盖私钥、常见 API key、Bearer token、password/token/secret 键值；归档单事件上限 30,000 字符。
+- 明确强语气决定在实时会话可自动 `verified`；历史回填和会话摘要统一写 `candidate`。
 - `scope` 可按 cwd/消息文本限定项目或技能；不自动注入每轮对话。
 
 ---

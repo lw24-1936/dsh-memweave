@@ -89,7 +89,7 @@ Two cross-cutting rules:
 | 🕸️ | **Task networks** | Goals become dependency-aware task nodes with anti-pattern warnings |
 | 🖥️ | **Three settings tabs** | Storage & categories, memories, fusion — one Host data source |
 | 🔌 | **Read-only fusion** | Five fixed built-in adapters; no config edits, tool hijacking, auto-sync, or auto-detection |
-| 🧠 | **Automatic learning (optional)** | Live sessions + history backfill; explicit decisions/corrections only, redacted; no raw conversations or tool output |
+| 🧠 | **Automatic learning (optional)** | Archives redacted session events including tool operations; memories extract explicit decisions/corrections and session summaries |
 | 🔒 | **Atomic local storage** | Exclusive temp file + `rename`; single-file writes are atomic |
 | 📦 | **No third-party runtime deps** | Host uses DSH SDK + Node built-ins; Client uses host React only |
 
@@ -398,7 +398,8 @@ An imported `anti_pattern` without invalidation notes is downgraded to `fact`, k
 Automatic learning is off by default. When enabled:
 
 - observes `user/message` in new sessions and can backfill history;
-- extracts only explicit user decisions/corrections; never raw conversations, assistant reasoning, or tool output;
+- archives redacted user/assistant messages, tool calls, and results under `sessions/*.jsonl`;
+- extracts only explicit decisions/corrections and session summaries into memory, never raw tool output;
 - redacts keys/tokens;
 - auto-verifies explicit decisions in live sessions; writes the rest as `candidate`;
 - can be limited by project or skill name;
