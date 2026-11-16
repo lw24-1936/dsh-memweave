@@ -196,6 +196,7 @@ Call `plugin_manager` from DSH:
 Or install directly from GitHub:
 
 ```bash
+dsh plugin --profile desktop add git+https://github.com/lw24-1936/dsh-memweave.git
 npx @deepseek-ai/dsh plugin --profile desktop add git+https://github.com/lw24-1936/dsh-memweave.git
 ```
 

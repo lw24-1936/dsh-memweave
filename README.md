@@ -196,6 +196,7 @@ Host 的必需依赖只有 `tools`；`webServer`、`configEditor` 是可选依�
 也可以直接安装 GitHub 仓库：
 
 ```bash
+dsh plugin --profile desktop add git+https://github.com/lw24-1936/dsh-memweave.git
 npx @deepseek-ai/dsh plugin --profile desktop add git+https://github.com/lw24-1936/dsh-memweave.git
 ```
 
