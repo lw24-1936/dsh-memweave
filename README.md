@@ -193,6 +193,12 @@ Host 的必需依赖只有 `tools`；`webServer`、`configEditor` 是可选依�
 }
 ```
 
+也可以直接安装 GitHub 仓库：
+
+```bash
+npx @deepseek-ai/dsh plugin --profile desktop add git+https://github.com/lw24-1936/dsh-memweave.git
+```
+
 安装完成后，`dsh-memweave` 会成为当前 profile 的一个 bundle。默认 patch 只插入自身一行：
 
 ```yaml

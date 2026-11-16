@@ -193,6 +193,12 @@ Call `plugin_manager` from DSH:
 }
 ```
 
+Or install directly from GitHub:
+
+```bash
+npx @deepseek-ai/dsh plugin --profile desktop add git+https://github.com/lw24-1936/dsh-memweave.git
+```
+
 The default patch inserts only Memweave itself:
 
 ```yaml
